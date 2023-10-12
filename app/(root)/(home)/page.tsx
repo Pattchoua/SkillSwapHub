@@ -6,63 +6,14 @@ import { HomePageFilters } from "@/constants/filters";
 import HomeFilters from "@/components/home/HomeFilters";
 import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
+import { getQuestions } from "@/lib/actions/question.actions";
 
-const questions = [
-  {
-    _id: "1",
-    title: "How Can You Enhance Your Culinary Skills?",
-    tags: [
-      { _id: "1", name: "Cooking" },
-      { _id: "2", name: "Culinary Arts" },
-    ],
-    author: {
-      _id: "10",
-      name: "John Doe",
-      picture: "https://example.com/johndoe.jpg",
-    },
-    upvotes: 10,
-    views: 100,
-    answers: [
-      {
-        text: "Practice makes perfect!",
-        author: "Jane Doe",
-      },
-      {
-        text: "Join a local cooking class.",
-        author: "Bob Smith",
-      },
-    ],
-    createdAt: new Date("2023-09-01T12:00:00.000Z"),
-  },
-  {
-    _id: "2",
-    title: "Want to Master a New Language?",
-    tags: [
-      { _id: "3", name: "Language Learning" },
-      { _id: "4", name: "Education" },
-    ],
-    author: {
-      _id: "11",
-      name: "John Doe",
-      picture: "https://example.com/johndoe.jpg",
-    },
-    upvotes: 10,
-    views: 100,
-    answers: [
-      {
-        text: "Use language learning apps.",
-        author: "Alice Johnson",
-      },
-      {
-        text: "Practice with native speakers.",
-        author: "Bob Smith",
-      },
-    ],
-    createdAt: new Date("2023-09-01T12:00:00.000Z"),
-  },
-];
 
-export default function Home() {
+export default async function Home() {
+
+  const response = await getQuestions({});
+  console.log(response.questions)
+
   return (
     <>
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
@@ -89,8 +40,8 @@ export default function Home() {
       </div>
       <HomeFilters />
       <div className="mt-10 flex w-full flex-col gap-6">
-        {questions.length > 0 ? (
-          questions.map((question) => (
+        {response.questions.length > 0 ? (
+          response.questions.map((question) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
