@@ -70,9 +70,9 @@ export async function deleteUser(params: DeleteUserParams) {
     }
 
     // Find all questions authored by this user.
-    const userQuestionIds = await Question.find({ author: user._id }).distinct(
-      "-id"
-    );
+    //const userQuestionIds = await Question.find({ author: user._id }).distinct(
+    //  "-id"
+    //);
     // Delete all questions authored by this user.
     await Question.deleteMany({ author: user._id });
 
