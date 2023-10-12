@@ -50,39 +50,45 @@ const QuestionCard = ({
       </div>
       <div className="mt-3.5 flex flex-wrap gap-2">
         {tags.map((tag) => (
-          <RenderTag key={tag._id} _id={tag._id} name={tag.name} />
+          <RenderTag
+            key={tag._id}
+            _id={tag._id}
+            name={tag.name}
+            totalQuestions={100}
+            showCount={true}
+          />
         ))}
       </div>
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
-        imgUrl="/assets/icons/avatar.svg"
-        alt="user"
-        value={author.name}
-        title={`- asked ${getTimestamp(createdAt)}`}
-        href={`/profile/${author._id}`}
-        isAuthor
-        textStyles="body-medium text-dark400_light700"
+          imgUrl="/assets/icons/avatar.svg"
+          alt="user"
+          value={author.name}
+          title={`- asked ${getTimestamp(createdAt)}`}
+          href={`/profile/${author._id}`}
+          isAuthor
+          textStyles="body-medium text-dark400_light700"
         />
-         <Metric
-        imgUrl="/assets/icons/like.svg"
-        alt="Upvotes"
-        value={formatNumber(upvotes)}
-        title=" Votes"
-        textStyles="small-medium text-dark400_light800"
+        <Metric
+          imgUrl="/assets/icons/like.svg"
+          alt="Upvotes"
+          value={formatNumber(upvotes)}
+          title=" Votes"
+          textStyles="small-medium text-dark400_light800"
         />
-         <Metric
-        imgUrl="/assets/icons/message.svg"
-        alt="message"
-        value={formatNumber(answers.length)}
-        title=" Answers"
-        textStyles="small-medium text-dark400_light800"
+        <Metric
+          imgUrl="/assets/icons/message.svg"
+          alt="message"
+          value={formatNumber(answers.length)}
+          title=" Answers"
+          textStyles="small-medium text-dark400_light800"
         />
-         <Metric
-        imgUrl="/assets/icons/eye.svg"
-        alt="eye"
-        value={formatNumber(views)}
-        title=" Views"
-        textStyles="small-medium text-dark400_light800"
+        <Metric
+          imgUrl="/assets/icons/eye.svg"
+          alt="eye"
+          value={formatNumber(views)}
+          title=" Views"
+          textStyles="small-medium text-dark400_light800"
         />
       </div>
     </div>
