@@ -54,14 +54,12 @@ const QuestionCard = ({
             key={tag._id}
             _id={tag._id}
             name={tag.name}
-            totalQuestions={100}
-            showCount={true}
-          />
+            showCount={true} totalQuestions={0}          />
         ))}
       </div>
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
         <Metric
-          imgUrl="/assets/icons/avatar.svg"
+          imgUrl={author.picture}
           alt="user"
           value={author.name}
           title={`- asked ${getTimestamp(createdAt)}`}
