@@ -15,9 +15,7 @@ export async function createAnswer(params: CreateAnswerParams) {
     const { content, question, author, path } = params;
 
     // Create a new answer using the provided content, question, and author.
-    const newAnswer = new Answer({ question, content, author });
-
-    console.log({ newAnswer });
+    const newAnswer = await Answer.create({ question, content, author });
 
     // adding the answer to the question's answer array
     await Question.findByIdAndUpdate(question, {
@@ -37,12 +35,13 @@ export async function createAnswer(params: CreateAnswerParams) {
 export async function getAnswers(params: GetAnswersParams) {
   try {
     connectToDatabase();
-    const answers = await Answer.find({})
-      .populate({ path: "tags", model: Tag })
-      .populate({ path: "author", model: User })
+    const { questionId } = params;
+
+    const answers = await Answer.find({ question: questionId })
+      .populate("author", "_id clerkId name picture")
       .sort({ createdAt: -1 });
 
-    return { questions };
+    return { answers };
   } catch (error) {
     console.log(error);
     throw error;

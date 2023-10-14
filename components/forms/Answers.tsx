@@ -4,10 +4,8 @@ import React, { useRef, useState } from "react";
 import {
   Form,
   FormControl,
-  FormDescription,
   FormField,
   FormItem,
-  FormLabel,
   FormMessage,
 } from "../ui/form";
 import { useForm } from "react-hook-form";
@@ -21,6 +19,7 @@ import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.actions";
 import { usePathname } from "next/navigation";
 
+// Type definition for the component props.
 interface Props {
   question: string;
   questionId: string;
@@ -34,7 +33,7 @@ const Answers = ({ question, questionId, authorId }: Props) => {
 
   const [isSubmitting, setIsSubmitting] = useState(false);
 
-  // Defining the form (form From ShadCN/ui).
+  // Set up the form with React Hook Form and Zod validation.
   const form = useForm<z.infer<typeof AnswerSchema>>({
     resolver: zodResolver(AnswerSchema),
     defaultValues: {
@@ -42,7 +41,7 @@ const Answers = ({ question, questionId, authorId }: Props) => {
     },
   });
 
-  // function to handle the answer submission
+  // Function to handle form submission and create an answer.
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
     try {
@@ -54,6 +53,7 @@ const Answers = ({ question, questionId, authorId }: Props) => {
       });
       form.reset();
 
+      // Clear the TinyMCE editor content.
       if (editorRef.current) {
         const editor = editorRef.current as any;
         editor.setContent("");
@@ -67,6 +67,7 @@ const Answers = ({ question, questionId, authorId }: Props) => {
 
   return (
     <div>
+      {/* Header and AI answer generation button. */}
       <div className="flex flex-col justify-between gap-5 sm:flex-row sm:items-center sm:gap-2 pt-3">
         <h4 className="paragraph-semibold text-dark400_light800">
           Write your answer Here
@@ -85,6 +86,7 @@ const Answers = ({ question, questionId, authorId }: Props) => {
           Generate an AI answer
         </Button>
       </div>
+      {/* main form and editor */}
       <Form {...form}>
         <form
           className="mt-6 flex w-full flex-col gap-10"
@@ -144,14 +146,14 @@ const Answers = ({ question, questionId, authorId }: Props) => {
             )}
           />
           <div className="flex justify-end">
-          <Button
-            type="submit"
-            className="primary-gradient w-fit !text-light-900"
-            disabled={isSubmitting}
-          >
-            {isSubmitting ? "Submitting..." : "Submit"}
-          </Button>
-        </div>
+            <Button
+              type="submit"
+              className="primary-gradient w-fit !text-light-900"
+              disabled={isSubmitting}
+            >
+              {isSubmitting ? "Submitting..." : "Submit"}
+            </Button>
+          </div>
         </form>
       </Form>
     </div>

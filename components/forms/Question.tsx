@@ -1,5 +1,4 @@
 "use client";
-//Use the useForm hook from react-hook-form to create a form.(shadCN/UI)
 import React, { useRef, useState } from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -29,13 +28,13 @@ interface Props {
   mongoUserId: string;
 }
 const Question = ({ mongoUserId }: Props) => {
-  const {mode} = useTheme();
+  const { mode } = useTheme();
   const editorRef = useRef(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const router = useRouter();
   const pathname = usePathname();
 
-  // 1. Define your form.
+  // Set up the form with React Hook Form and Zod validation.
   const form = useForm<z.infer<typeof QuestionSchema>>({
     resolver: zodResolver(QuestionSchema),
     defaultValues: {
@@ -45,7 +44,7 @@ const Question = ({ mongoUserId }: Props) => {
     },
   });
 
-  // function to handle the form submittion
+  // Function to handle form submission and create a question.
   async function onSubmit(values: z.infer<typeof QuestionSchema>) {
     setIsSubmitting(true);
     try {
@@ -65,7 +64,7 @@ const Question = ({ mongoUserId }: Props) => {
     }
   }
 
-  //Function to handle the Tag Input
+  // Function to handle tag input (when Enter key is pressed).
   const handleInputkeyDown = (
     e: React.KeyboardEvent<HTMLInputElement>,
     field: any
@@ -93,7 +92,7 @@ const Question = ({ mongoUserId }: Props) => {
     }
   };
 
-  //Function to handle the Tag remove
+  // Function to remove a specific tag.
   const handleTagRemove = (tag: string, field: any) => {
     const newTags = field.value.filter((t: string) => t !== tag);
     form.setValue("tags", newTags);
@@ -101,11 +100,13 @@ const Question = ({ mongoUserId }: Props) => {
 
   return (
     <div>
+      {/* main form to ask a question. */}
       <Form {...form}>
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex w-full flex-col gap-10"
         >
+          {/* Form field to input the question title */}
           <FormField
             control={form.control}
             name="title"
@@ -129,6 +130,7 @@ const Question = ({ mongoUserId }: Props) => {
             )}
           />
 
+          {/* Form field to input detailed explanation using the TinyMCE editor */}
           <FormField
             control={form.control}
             name="explanation"
@@ -178,8 +180,8 @@ const Question = ({ mongoUserId }: Props) => {
                         "alignright alignjustify | bullist numlist",
                       content_style:
                         "body { font-family:Inter font-size:16px }",
-                        skin: mode === 'dark' ? 'oxide-dark' : 'oxide',
-                      content_css: mode === 'dark' ? 'dark' : 'light',
+                      skin: mode === "dark" ? "oxide-dark" : "oxide",
+                      content_css: mode === "dark" ? "dark" : "light",
                     }}
                   />
                 </FormControl>
@@ -192,6 +194,7 @@ const Question = ({ mongoUserId }: Props) => {
             )}
           />
 
+          {/* Form field to input tags. */}
           <FormField
             control={form.control}
             name="tags"
@@ -237,6 +240,7 @@ const Question = ({ mongoUserId }: Props) => {
             )}
           />
 
+          {/* Button to submit the form. */}
           <Button
             type="submit"
             className="primary-gradient w-fit !text-light-900"
