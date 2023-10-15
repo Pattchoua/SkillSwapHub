@@ -46,8 +46,18 @@ const page = async ({ params }) => {
               {response.author.name}
             </p>
           </Link>
+          {/* Voting options */}
           <div className="flex justify-end">
-            <Votes />
+            <Votes 
+            type='question'
+            itemId={JSON.stringify(response._id)}
+            userId={JSON.stringify(mongoUser._id)}
+            upvotes={response.upvotes.length}
+            hasupvoted={response.upvotes.includes(mongoUser._Id)}
+            downvotes={response.downvotes.length}
+            hasdownvoted={response.downvotes.includes(mongoUser._Id)}
+            hasSaved={mongoUser?.saved.includes(response._id)}
+            />
           </div>
         </div>
         <h2 className="h2-semibold text-dark200_light900 mt-3.5">
