@@ -1,6 +1,10 @@
 "use client";
 
-import { downvoteQuestion, upvoteQuestion } from "@/lib/actions/question.actions";
+import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.actions";
+import {
+  downvoteQuestion,
+  upvoteQuestion,
+} from "@/lib/actions/question.actions";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
@@ -48,40 +52,39 @@ const Votes = ({
           path: pathname,
         });
       } else if (type === "Answer") {
-        // await upvoteAnswer({
-        //     questionId: JSON.parse(itemId),
-        //     userId: JSON.parse(userId),
-        //     hasupVoted,
-        //     hasdownVoted,
-        //     path: pathname,
-        // })
+        await upvoteAnswer({
+          answerId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
       }
       //TODO: showing a Toast
       return;
     }
-     // Handling the downvote
-     if (action === "downvote") {
-        if (type === "Question") {
-          await downvoteQuestion({
-            questionId: JSON.parse(itemId),
-            userId: JSON.parse(userId),
-            hasupVoted,
-            hasdownVoted,
-            path: pathname,
-          });
-        } else if (type === "Answer") {
-          // await downAnswer({
-          //     questionId: JSON.parse(itemId),
-          //     userId: JSON.parse(userId),
-          //     hasupVoted,
-          //     hasdownVoted,
-          //     path: pathname,
-          // })
-        }
-        //TODO: showing a Toast
-        return;
+    // Handling the downvote
+    if (action === "downvote") {
+      if (type === "Question") {
+        await downvoteQuestion({
+          questionId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      } else if (type === "Answer") {
+        await downvoteAnswer({
+          answerId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
       }
-
+      //TODO: showing a Toast
+      return;
+    }
   };
 
   return (
@@ -129,18 +132,21 @@ const Votes = ({
         </div>
       </div>
       {/* hassaved */}
-      <Image
-        src={
-          hasSaved
-            ? "/assets/icons/star-filled.svg"
-            : "/assets/icons/star-red.svg"
-        }
-        alt="star"
-        height={18}
-        width={18}
-        className="cursor-pointer"
-        onClick={handleSave}
-      />
+
+      {type === "Question" && (
+        <Image
+          src={
+            hasSaved
+              ? "/assets/icons/star-filled.svg"
+              : "/assets/icons/star-red.svg"
+          }
+          alt="star"
+          height={18}
+          width={18}
+          className="cursor-pointer"
+          onClick={handleSave}
+        />
+      )}
     </div>
   );
 };

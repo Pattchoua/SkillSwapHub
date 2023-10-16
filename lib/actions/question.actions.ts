@@ -107,7 +107,7 @@ export async function upvoteQuestion(params: QuestionVoteParams) {
         $push: { upvotes: userId },
       };
     } else {
-      updateQuery = { $addToset: { upvotes: userId } };
+      updateQuery = { $addToSet: { upvotes: userId } };
     }
 
     const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
@@ -144,7 +144,7 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
         $push: { downvotes: userId },
       };
     } else {
-      updateQuery = { $addToset: { downvotes: userId } };
+      updateQuery = { $addToSet: { downvotes: userId } };
     }
 
     const question = await Question.findByIdAndUpdate(questionId, updateQuery, {
