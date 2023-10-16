@@ -12,7 +12,12 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const page = async ({ params }: { params: any }) => {
+interface ParamsType {
+  id: string;
+  // ... other properties
+}
+
+const page = async ({ params }: { params: ParamsType }) => {
   // Fetching the question based on the provided ID.
   const response = await getQuestionsById({
     questionId: params.id,
