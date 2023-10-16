@@ -12,7 +12,7 @@ import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
-const page = async ({ params }) => {
+const page = async ({ params }: { params: any }) => {
   // Fetching the question based on the provided ID.
   const response = await getQuestionsById({
     questionId: params.id,
@@ -48,15 +48,15 @@ const page = async ({ params }) => {
           </Link>
           {/* Voting options */}
           <div className="flex justify-end">
-            <Votes 
-            type='question'
-            itemId={JSON.stringify(response._id)}
-            userId={JSON.stringify(mongoUser._id)}
-            upvotes={response.upvotes.length}
-            hasupvoted={response.upvotes.includes(mongoUser._Id)}
-            downvotes={response.downvotes.length}
-            hasdownvoted={response.downvotes.includes(mongoUser._Id)}
-            hasSaved={mongoUser?.saved.includes(response._id)}
+            <Votes
+              type="Question"
+              itemId={JSON.stringify(response._id)}
+              userId={JSON.stringify(mongoUser._id)}
+              upvotes={response.upvotes.length}
+              hasupVoted={response.upvotes.includes(mongoUser._Id)}
+              downvotes={response.downvotes.length}
+              hasdownVoted={response.downvotes.includes(mongoUser._Id)}
+              hasSaved={mongoUser?.saved.includes(response._id)}
             />
           </div>
         </div>

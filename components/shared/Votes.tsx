@@ -1,18 +1,18 @@
-'use client'
+"use client";
 
-
+import { downvoteQuestion, upvoteQuestion } from "@/lib/actions/question.actions";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
-import React from "react";
+import { usePathname, useRouter } from "next/navigation";
 
 interface Props {
   type: string;
   itemId: string;
   userId: string;
   upvotes: number;
-  hasupvoted: boolean;
+  hasupVoted: boolean;
   downvotes: number;
-  hasdownvoted: boolean;
+  hasdownVoted: boolean;
   hasSaved?: boolean;
 }
 
@@ -21,22 +21,68 @@ const Votes = ({
   itemId,
   userId,
   upvotes,
-  hasupvoted,
+  hasupVoted,
   downvotes,
-  hasdownvoted,
+  hasdownVoted,
   hasSaved,
 }: Props) => {
+  const pathname = usePathname();
+  const router = useRouter();
 
-// function to save the votes
-const handleSave = () => {
+  // function to save the votes
+  const handleSave = () => {};
 
-}
+  // function to handle the votes
+  const handleVote = async (action: string) => {
+    if (!userId) {
+      return;
+    }
+    // Handling the upvote
+    if (action === "upvote") {
+      if (type === "Question") {
+        await upvoteQuestion({
+          questionId: JSON.parse(itemId),
+          userId: JSON.parse(userId),
+          hasupVoted,
+          hasdownVoted,
+          path: pathname,
+        });
+      } else if (type === "Answer") {
+        // await upvoteAnswer({
+        //     questionId: JSON.parse(itemId),
+        //     userId: JSON.parse(userId),
+        //     hasupVoted,
+        //     hasdownVoted,
+        //     path: pathname,
+        // })
+      }
+      //TODO: showing a Toast
+      return;
+    }
+     // Handling the downvote
+     if (action === "downvote") {
+        if (type === "Question") {
+          await downvoteQuestion({
+            questionId: JSON.parse(itemId),
+            userId: JSON.parse(userId),
+            hasupVoted,
+            hasdownVoted,
+            path: pathname,
+          });
+        } else if (type === "Answer") {
+          // await downAnswer({
+          //     questionId: JSON.parse(itemId),
+          //     userId: JSON.parse(userId),
+          //     hasupVoted,
+          //     hasdownVoted,
+          //     path: pathname,
+          // })
+        }
+        //TODO: showing a Toast
+        return;
+      }
 
-// function to handle the votes
-const handleVote = (action: string) => {
-
-}
-
+  };
 
   return (
     <div className="flex gap-5">
@@ -45,7 +91,7 @@ const handleVote = (action: string) => {
         <div className="flex-center gap-1.5">
           <Image
             src={
-              hasupvoted
+              hasupVoted
                 ? "/assets/icons/upvoted.svg"
                 : "/assets/icons/upvote.svg"
             }
@@ -53,7 +99,7 @@ const handleVote = (action: string) => {
             height={18}
             width={18}
             className="cursor-pointer"
-            onClick={() => handleVote(upvote)}
+            onClick={() => handleVote("upvote")}
           />
           <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
             <p className="subtle-medium text-dark400_light900">
@@ -65,7 +111,7 @@ const handleVote = (action: string) => {
         <div className="flex-center gap-1.5">
           <Image
             src={
-              hasdownvoted
+              hasdownVoted
                 ? "/assets/icons/downvoted.svg"
                 : "/assets/icons/downvote.svg"
             }
@@ -73,7 +119,7 @@ const handleVote = (action: string) => {
             height={18}
             width={18}
             className="cursor-pointer"
-            onClick={() => handleVote(downvote)}
+            onClick={() => handleVote("downvote")}
           />
           <div className="flex-center background-light700_dark400 min-w-[18px] rounded-sm p-1">
             <p className="subtle-medium text-dark400_light900">
@@ -83,18 +129,18 @@ const handleVote = (action: string) => {
         </div>
       </div>
       {/* hassaved */}
-          <Image
-            src={
-              hasSaved
-                ? "/assets/icons/star-filled.svg"
-                : "/assets/icons/star-red.svg"
-            }
-            alt="star"
-            height={18}
-            width={18}
-            className="cursor-pointer"
-            onClick={handleSave}
-          />
+      <Image
+        src={
+          hasSaved
+            ? "/assets/icons/star-filled.svg"
+            : "/assets/icons/star-red.svg"
+        }
+        alt="star"
+        height={18}
+        width={18}
+        className="cursor-pointer"
+        onClick={handleSave}
+      />
     </div>
   );
 };
