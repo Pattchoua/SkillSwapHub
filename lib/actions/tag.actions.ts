@@ -2,8 +2,14 @@
 
 import User from "@/database/user.model";
 import { connectToDatabase } from "../mongoose";
-import { GetAllTagsParams, GetTopInteractedTagsParams } from "./shared.types";
-import Tag from "@/database/tag.model";
+import {
+  GetAllTagsParams,
+  GetQuestionsByTagIdParams,
+  GetTopInteractedTagsParams,
+} from "./shared.types";
+import Tag, { ITag } from "@/database/tag.model";
+import Question from "@/database/question.model";
+import { FilterQuery } from "mongoose";
 
 // Asynchronous function to fetch TopInteractedTags
 export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
@@ -32,6 +38,57 @@ export async function getAllTags(params: GetAllTagsParams) {
     connectToDatabase();
     const tags = await Tag.find({});
     return { tags };
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+// Asynchronous function fetching questions associated with a specific tag ID.
+export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
+  try {
+    connectToDatabase();
+    const {
+      tagId,
+      // page = 1,
+      // pageSize = 10,
+      searchQuery,
+    } = params;
+
+    // Filter query to find the tag by its ID.
+    const tagFilter: FilterQuery<ITag> = { _id: tagId };
+
+    // Fetch the tag from the database using its ID.
+    const tag = await Tag.findOne(tagFilter).populate({
+      path: "questions",
+      model: Question,
+
+      // If there's a search query, filter questions by their title using the search term.
+      match: searchQuery
+        ? { title: { $regex: searchQuery, $options: "i" } }
+        : {},
+
+      // Sort the populated questions in descending order by their creation date.
+      options: {
+        sort: { createdAt: -1 },
+      },
+
+      // Further populate each question to retrieve its tags and author details.
+      populate: [
+        { path: "tags", model: Tag, select: "_id name" },
+        { path: "author", model: User, select: "_id name clerkId picture" },
+      ],
+    });
+    if (!tag) {
+      throw new Error("Tag not found");
+    }
+    // Extract the questions associated with the retrieved tag.
+    const questions = tag.questions;
+
+    // Return the tag's name and its associated questions.
+    return { tagTitle: tag.name, questions };
+
+    // error handling
   } catch (error) {
     console.log(error);
     throw error;
