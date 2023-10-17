@@ -8,6 +8,7 @@ import {
   GetAllUsersParams,
   GetSavedQuestionsParams,
   GetUserByIdParams,
+  GetUserStatsParams,
   ToggleSaveQuestionParams,
   UpdateUserParams,
 } from "./shared.types";
@@ -17,6 +18,7 @@ import path from "path";
 import Tag from "@/database/tag.model";
 import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
+import Answers from "@/components/forms/Answers";
 
 // Asynchronous function to fetch all Users
 export async function getAllUsers(params: GetAllUsersParams) {
@@ -199,6 +201,64 @@ export async function getUserInfo(params: GetUserByIdParams) {
     const totalQuestions = await Question.countDocuments({ author: user._id });
     const totalAnswers = await Answer.countDocuments({ author: user._id });
     return { user, totalQuestions, totalAnswers };
+
+    // error handling
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+// Asynchronous function to fetch the user's questions.
+export async function getUserQuestions(params: GetUserStatsParams) {
+  try {
+    connectToDatabase();
+    const {
+      userId,
+      // page = 1,
+      // pageSize = 10,
+    } = params;
+
+    // Get the total number of questions authored by the user.
+    const totalQuestions = await Question.countDocuments({ author: userId });
+
+    // Fetch the questions authored by the user
+    const userQuestions = await Question.find({ author: userId })
+      .sort({ views: -1, upvotes: -1 })
+      .populate("tags", "_id name")
+      .populate("author", "_id clerkId picture name");
+
+    // Return the total number of questions and the list of questions.  
+    return { totalQuestions, questions: userQuestions };
+
+    // error handling
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+// Asynchronous function to fetch the user's Answer.
+export async function getUserAnswers(params: GetUserStatsParams) {
+  try {
+    connectToDatabase();
+    const {
+      userId,
+      // page = 1,
+      // pageSize = 10,
+    } = params;
+
+    // Get the total number of answers authored by the user.
+    const totalAnswers = await Answer.countDocuments({ author: userId });
+
+    // Fetch the answers authored by the user
+    const userAnswers = await Answer.find({ author: userId })
+      .sort({ views: -1, upvotes: -1 })
+      .populate("question", "_id title")
+      .populate("author", "_id clerkId picture name");
+
+    // Return the total number of answers and the list of answers.  
+    return { totalAnswers, answers: userAnswers };
 
     // error handling
   } catch (error) {

@@ -7,7 +7,7 @@ interface StatsCardProps {
   value: number;
   title: string;
 }
-
+// StatsCard component
 const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
   return (
     <div className="light-border bacground-light900_dark300 flex flex-wrap items-center justify-start gap-4 rounded-md border p-6 shadow-light-300 dark:shadow-dark-200">
@@ -24,9 +24,12 @@ interface Props {
   totalQuestions: number;
   totalAnswers: number;
 }
+
+// Stats component, which displays statistics such as total questions, total answers, and badge counts.
 const Stats = ({ totalQuestions, totalAnswers }: Props) => {
   return (
     <div className="mt-10">
+      {/* Display total questions and answers  */}
       <h4 className="h3-semibold text-dark200_light900">Stats</h4>
       <div className="mt-5 grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-4">
         <div className="light-border bacground-light900_dark300 flex flex-wrap items-center justify-evently gap-4 rounded-md border p-6 shadow-light-300 dark:shadow-dark-200">
@@ -43,6 +46,8 @@ const Stats = ({ totalQuestions, totalAnswers }: Props) => {
             <p className="body-medium text-dark400_light700">Answers</p>
           </div>
         </div>
+
+        {/* Display badge statistics using the StatsCard component. */}
         <StatsCard
           imgUrl="/assets/icons/gold-medal.svg"
           value={0}

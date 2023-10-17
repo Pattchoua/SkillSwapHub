@@ -9,6 +9,8 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getFormattedDate } from "@/lib/utils";
 import ProfileLink from "@/components/shared/ProfileLink";
 import Stats from "@/components/shared/Stats";
+import QuestionsTab from "@/components/shared/QuestionsTab";
+import AnswersTab from "@/components/shared/AnswersTab";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
@@ -16,13 +18,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
   // Fetch the user information based on the provided ID
   const userInfo = await getUserInfo({ userId: params.id });
 
-
   return (
     <>
-     {/* Profile section */}
+      {/* Profile section */}
       <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
         <div className="flex flex-col items-start gap-4 lg:flex-row">
-
           {/* Display the user's profile picture */}
           <Image
             src={userInfo?.user.picture}
@@ -70,10 +70,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
         </div>
       </div>
 
-       {/* Display the user's stats (e.g., total questions and answers) */}
+      {/* Display the user's stats (e.g., total questions and answers) */}
       <Stats
-      totalQuestions={userInfo.totalQuestions}
-      totalAnswers={userInfo.totalAnswers}
+        totalQuestions={userInfo.totalQuestions}
+        totalAnswers={userInfo.totalAnswers}
       />
 
       {/* Tabs section for "Top Posts" and "Answers" */}
@@ -81,14 +81,28 @@ const Page = async ({ params, searchParams }: URLProps) => {
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-[42px] p-1">
             <TabsTrigger value="top-posts" className="tab">
-              QuestionsTab
+              Top Posts
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
-              AnswersTab
+              Answers
             </TabsTrigger>
           </TabsList>
-          <TabsContent value="top-posts">Posts</TabsContent>
-          <TabsContent value="answers">Answers</TabsContent>
+          <TabsContent value="top-posts">
+            <QuestionsTab
+              searchParams={searchParams}
+              userId={userInfo.user._id}
+              clerkId={clerkId}
+            />
+          </TabsContent>
+          <TabsContent value="answers"
+          className="flex w-full flex-col gap-6"
+          >
+            <AnswersTab 
+             searchParams={searchParams}
+             userId={userInfo.user._id}
+             clerkId={clerkId}
+            />
+          </TabsContent>
         </Tabs>
       </div>
     </>

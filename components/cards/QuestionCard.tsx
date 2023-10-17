@@ -7,6 +7,7 @@ import { formatNumber } from "@/lib/utils";
 
 interface QuestionProps {
   _id: string;
+  clerkId?: string;
   title: string;
   tags: {
     _id: string;
@@ -25,6 +26,7 @@ interface QuestionProps {
 
 const QuestionCard = ({
   _id,
+  clerkId,
   title,
   tags,
   author,
@@ -54,7 +56,9 @@ const QuestionCard = ({
             key={tag._id}
             _id={tag._id}
             name={tag.name}
-            showCount={true} totalQuestions={0}          />
+            showCount={true}
+            totalQuestions={0}
+          />
         ))}
       </div>
       <div className="flex-between mt-6 w-full flex-wrap gap-3">
