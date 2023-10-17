@@ -1,6 +1,7 @@
 "use client";
 
 import { downvoteAnswer, upvoteAnswer } from "@/lib/actions/answer.actions";
+import { viewQuestion } from "@/lib/actions/interaction.actions";
 import {
   downvoteQuestion,
   upvoteQuestion,
@@ -9,6 +10,7 @@ import { toggleSaveQuestion } from "@/lib/actions/user.actions";
 import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 interface Props {
   type: string;
@@ -34,7 +36,7 @@ const Votes = ({
   const pathname = usePathname();
   const router = useRouter();
 
-  // function to save the votes
+  // Function to save the current state of votes
   const handleSave = async () => {
     await toggleSaveQuestion({
       questionId: JSON.parse(itemId),
@@ -43,7 +45,7 @@ const Votes = ({
     });
   };
 
-  // function to handle the save Question 
+  // Function to handle voting (both upvoting and downvoting) based on the action provided
   const handleVote = async (action: string) => {
     if (!userId) {
       return;
@@ -93,6 +95,14 @@ const Votes = ({
       return;
     }
   };
+
+  // useEffect hook to record the viewing of a question
+  useEffect(() => {
+    viewQuestion({
+      questionId: JSON.parse(itemId),
+      userId: userId ? JSON.parse(userId) : undefined,
+    });
+  }, [itemId, userId, pathname, router]);
 
   return (
     <div className="flex gap-5">
