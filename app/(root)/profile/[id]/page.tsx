@@ -12,11 +12,18 @@ import Stats from "@/components/shared/Stats";
 
 const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
+
+  // Fetch the user information based on the provided ID
   const userInfo = await getUserInfo({ userId: params.id });
+
+
   return (
     <>
+     {/* Profile section */}
       <div className="flex flex-col-reverse items-start justify-between sm:flex-row">
         <div className="flex flex-col items-start gap-4 lg:flex-row">
+
+          {/* Display the user's profile picture */}
           <Image
             src={userInfo?.user.picture}
             alt="profile picture"
@@ -25,12 +32,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
             className="rounded-full object-cover"
           />
           <div className="mt-3">
+            {/* Display the user's name and username */}
             <h2 className="h2-bold text-dark100_light900">
               {userInfo.user.name}
             </h2>
             <p className="paragraph-regular text-dark200_light800">
               {userInfo.user.username}
             </p>
+            {/* Display user's portfolio link and join date */}
             <div className="mt-5 flex flex-wrap items-center justify-start gap-1.5">
               {userInfo.user.portofolioWebsite && (
                 <ProfileLink
@@ -44,6 +53,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
                 title={getFormattedDate(userInfo.user.joinedAt)}
               />
             </div>
+            {/* Display the user's bio */}
             {userInfo.user.bio && <p>{userInfo.user.bio}</p>}
           </div>
         </div>
@@ -59,15 +69,22 @@ const Page = async ({ params, searchParams }: URLProps) => {
           </SignedIn>
         </div>
       </div>
-      <Stats/>
+
+       {/* Display the user's stats (e.g., total questions and answers) */}
+      <Stats
+      totalQuestions={userInfo.totalQuestions}
+      totalAnswers={userInfo.totalAnswers}
+      />
+
+      {/* Tabs section for "Top Posts" and "Answers" */}
       <div className="mt-10 flex gap-10">
         <Tabs defaultValue="top-posts" className="flex-1">
           <TabsList className="background-light800_dark400 min-h-[42px] p-1">
             <TabsTrigger value="top-posts" className="tab">
-              Top Posts
+              QuestionsTab
             </TabsTrigger>
             <TabsTrigger value="answers" className="tab">
-              Answers
+              AnswersTab
             </TabsTrigger>
           </TabsList>
           <TabsContent value="top-posts">Posts</TabsContent>
