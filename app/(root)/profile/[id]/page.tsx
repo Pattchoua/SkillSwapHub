@@ -41,13 +41,22 @@ const Page = async ({ params, searchParams }: URLProps) => {
             </p>
             {/* Display user's portfolio link and join date */}
             <div className="mt-5 flex flex-wrap items-center justify-start gap-1.5">
-              {userInfo.user.portofolioWebsite && (
+              
+            {userInfo.user.location && (
                 <ProfileLink
                   imgUrl="/assets/icons/link.svg"
-                  href={userInfo.user.portofolioWebsite}
-                  title="Portofolio"
+                  href={userInfo.user.portfolioWebsite}
+                  title="Portfolio"
                 />
               )}
+              
+              {userInfo.user.location && (
+                <ProfileLink
+                  imgUrl="/assets/icons/location.svg"
+                  title={userInfo.user.location}
+                />
+              )}
+
               <ProfileLink
                 imgUrl="/assets/icons/calendar.svg"
                 title={getFormattedDate(userInfo.user.joinedAt)}
@@ -94,13 +103,11 @@ const Page = async ({ params, searchParams }: URLProps) => {
               clerkId={clerkId}
             />
           </TabsContent>
-          <TabsContent value="answers"
-          className="flex w-full flex-col gap-6"
-          >
-            <AnswersTab 
-             searchParams={searchParams}
-             userId={userInfo.user._id}
-             clerkId={clerkId}
+          <TabsContent value="answers" className="flex w-full flex-col gap-6">
+            <AnswersTab
+              searchParams={searchParams}
+              userId={userInfo.user._id}
+              clerkId={clerkId}
             />
           </TabsContent>
         </Tabs>

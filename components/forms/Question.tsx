@@ -34,9 +34,9 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
   const router = useRouter();
   const pathname = usePathname();
 
-  const parsedQuestionDetails = JSON.parse(questionDetails || "");
+  const parsedQuestionDetails = JSON.parse(questionDetails || "{}");
 
-  const groupedTags = parsedQuestionDetails.tags.map((tag) => tag.name);
+  const groupedTags = parsedQuestionDetails.tags?.map((tag) => tag.name) || [];
 
   console.log(parsedQuestionDetails.content);
   // Set up the form with React Hook Form and Zod validation.
@@ -58,8 +58,8 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
           questionId: parsedQuestionDetails._id,
           title: values.title,
           content: values.explanation,
-          path:pathname,
-        })
+          path: pathname,
+        });
         router.push(`/question/${parsedQuestionDetails._id}`);
       } else {
         await createQuestion({

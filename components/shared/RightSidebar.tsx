@@ -2,31 +2,13 @@ import Link from "next/link";
 import React from "react";
 import Image from "next/image";
 import RenderTag from "./RenderTag";
+import { getTopQuestions } from "@/lib/actions/question.actions";
+import { getTopTags } from "@/lib/actions/tag.actions";
 
-const TopQuestions = [
-  { _id: "1", title: "How Can You Enhance Your Culinary Skills?" },
-  { _id: "2", title: "Ready to Level Up Your Photography Skills?" },
-  { _id: "3", title: "Want to Master a New Language? Tell Us Which One!" },
-  {
-    _id: "4",
-    title: "Ready to Amp Up Your Fitness Routine? Share Your Goals!",
-  },
-  {
-    _id: "5",
-    title:
-      "Exploring DIY Projects? What Skills Do You Need for Your Next Project?",
-  },
-];
 
-const TopTags = [
-  { _id: "1", name: "Technology & Programming", totalQuestions: 3 },
-  { _id: "2", name: "Art & Creativity", totalQuestions: 2 },
-  { _id: "3", name: "Languages & Communication", totalQuestions: 1 },
-  { _id: "4", name: "Cooking & Culinary Arts", totalQuestions: 5 },
-  { _id: "5", name: "DIY & Home Improvement", totalQuestions: 4 },
-];
-
-const RightSidebar = () => {
+const RightSidebar = async () => {
+  const TopQuestions = await getTopQuestions();
+  const TopTags = await getTopTags();
   return (
     <section
       className="background-light900_dark200 light-border 
@@ -38,7 +20,7 @@ const RightSidebar = () => {
         <div className="mt-7 flex w-full flex-col gap-[30px]">
           {TopQuestions.map((question) => (
             <Link
-              href={`/questions/${question._id}`}
+              href={`/question/${question._id}`}
               key={question._id}
               className="flex cursor-pointer items-center justify-between gap-7"
             >
@@ -64,7 +46,7 @@ const RightSidebar = () => {
               key={tag._id}
               _id={tag._id}
               name={tag.name}
-              totalQuestions={tag.totalQuestions}
+              totalQuestions={tag.numberOfQuestions}
               showCount
             />
           ))}

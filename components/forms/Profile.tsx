@@ -35,7 +35,7 @@ const Profile = ({ clerkId, user }: Props) => {
     defaultValues: {
       name: parsedUser.name || " ",
       username: parsedUser.username || " ",
-      portfoliowebsite: parsedUser.portfoliowebsite || " ",
+      portfolioWebsite: parsedUser.portfolioWebsite || " ",
       location: parsedUser.location || " ",
       bio: parsedUser.bio || " ",
     },
@@ -49,11 +49,11 @@ const Profile = ({ clerkId, user }: Props) => {
         updateData: {
           name: values.name,
           username: values.username,
-          portfoliowebsite: values.portfoliowebsite,
+          portfolioWebsite: values.portfolioWebsite,
           location: values.location,
           bio: values.bio,
         },
-        path: pathname
+        path: pathname,
       });
       router.back();
     } catch (error) {
@@ -112,7 +112,7 @@ const Profile = ({ clerkId, user }: Props) => {
         />
         <FormField
           control={form.control}
-          name="portfoliowebsite"
+          name="portfolioWebsite"
           render={({ field }) => (
             <FormItem className="">
               <FormLabel>Portfolio link</FormLabel>
@@ -120,9 +120,9 @@ const Profile = ({ clerkId, user }: Props) => {
                 <Input
                   type="url"
                   placeholder="Portfolio url..."
-                  {...field}
                   className=" no-focus paragraph-regular  light-border-2 
                 background-light700_dark300 text-dark300_light700 min-h-[56px] border"
+                  {...field}
                 />
               </FormControl>
               <FormMessage />

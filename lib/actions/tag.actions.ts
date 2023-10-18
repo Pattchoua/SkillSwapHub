@@ -94,3 +94,26 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     throw error;
   }
 }
+
+// function is to fetch the popular tags based on the number of questions associated with each tag.
+
+export async function getTopTags() {
+  try {
+    connectToDatabase();
+
+    // Use the aggregation pipeline to:
+    // 1. Project (or select) only the `name` of the tag and calculate the number of questions associated with each tag.
+    // 2. Sort the tags in descending order based on the number of questions.
+    // 3. Limit the result to the top 5 tags.
+    const topTags = await Tag.aggregate([
+      { $project: { name: 1, numberOfQuestions: { $size: "$questions" } } },
+      { $sort: { numberOfQuestions: -1 } },
+      { $limit: 5 },
+    ]);
+
+    return topTags;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
