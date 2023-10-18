@@ -8,9 +8,13 @@ import {
   CreateQuestionParams,
   GetQuestionByIdParams,
   QuestionVoteParams,
+  DeleteQuestionParams,
+  EditQuestionParams,
 } from "./shared.types";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
+import Answer from "@/database/answer.model";
+import interaction from "@/database/interaction.model";
 
 // Asynchronous function to create a new question.
 export async function createQuestion(params: CreateQuestionParams) {
@@ -156,6 +160,63 @@ export async function downvoteQuestion(params: QuestionVoteParams) {
     }
 
     //TODO: Increment author's reputation by +10 for upvoting a question
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+// Asynchronous function to delete a Question.
+export async function deleteQuestion(params: DeleteQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId, path } = params;
+    // Delete the question with the specified question ID.
+    await Question.deleteOne({ _id: questionId });
+
+    // Delete all answers associated with the deleted question.
+    await Answer.deleteMany({ question: questionId });
+
+    // Delete any interactions associated with the deleted question.
+    await interaction.deleteMany({ question: questionId });
+
+    // Update any tags associated with the deleted question,
+    // removing the question ID from their questions array.
+    await Tag.updateMany(
+      { questions: questionId },
+      { $pull: { questions: questionId } }
+    );
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+// Asynchronous function to edit a Question.
+export async function editQuestion(params: EditQuestionParams) {
+  try {
+    connectToDatabase();
+
+    const { questionId, content, title, path } = params;
+
+    // Attempt to find the question with the specified question ID in the database.
+    // Also, populate the 'tags' field of the found question.
+    const question = await Question.findById(questionId).populate("tags");
+
+    if (!question) {
+      throw new Error("Question not found");
+    }
+    // Update the title and content fields of the found question.
+    question.title = title;
+    question.content = content;
+
+    // Save the updated question back to the database.
+    await question.save();
 
     revalidatePath(path);
   } catch (error) {

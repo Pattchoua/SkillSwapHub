@@ -5,11 +5,13 @@ import { connectToDatabase } from "../mongoose";
 import {
   AnswerVoteParams,
   CreateAnswerParams,
+  DeleteAnswerParams,
   GetAnswersParams,
 } from "./shared.types";
 import Question from "@/database/question.model";
 import { revalidatePath } from "next/cache";
 import { Tag, User } from "lucide-react";
+import interaction from "@/database/interaction.model";
 
 // Asynchronous function to create a new Answer.
 export async function createAnswer(params: CreateAnswerParams) {
@@ -118,6 +120,40 @@ export async function downvoteAnswer(params: AnswerVoteParams) {
     }
 
     //TODO: Increment author's reputation by +10 for upvoting a question
+
+    revalidatePath(path);
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+// Asynchronous function to delete an Answer.
+export async function deleteAnswer(params: DeleteAnswerParams) {
+  try {
+    connectToDatabase();
+
+    const { answerId, path } = params;
+
+    // Fetch the answer using the provided answer ID.
+    const answer = await Answer.findById(answerId);
+
+    if (!answer) {
+      throw new Error("Answer not found");
+    }
+
+    // Delete the answer with the specified answer ID.
+    await Answer.deleteOne({ answer: answerId });
+
+    // Update any questions associated with the deleted answer,
+    // removing the answer ID from their answers array.
+    await Question.updateMany(
+      { _id: answer.question },
+      { $pull: { answers: answerId } }
+    );
+
+    // Delete any interactions associated with the deleted answer.
+    await interaction.deleteMany({ answer: answerId });
 
     revalidatePath(path);
   } catch (error) {
