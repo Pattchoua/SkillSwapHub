@@ -7,12 +7,12 @@ import HomeFilters from "@/components/home/HomeFilters";
 import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
 import { getQuestions } from "@/lib/actions/question.actions";
+import { SearchParamsProps } from "@/types";
 
-
-export default async function Home() {
-
-  const response = await getQuestions({});
-  console.log(response.questions)
+export default async function Home({ searchParams }: SearchParamsProps) {
+  const response = await getQuestions({
+    searchQuery: searchParams.q,
+  });
 
   return (
     <>
@@ -28,7 +28,7 @@ export default async function Home() {
         <LocalSearchbar
           route="/"
           iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
+          imgSrc="/assets/icons/search.png"
           otherClasses="flex-1"
           placeholder="Search for questions"
         />

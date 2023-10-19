@@ -66,8 +66,8 @@ const LocalSearchbar = ({
         <Image
           src={imgSrc}
           alt="Search icon"
-          width={24}
-          height={24}
+          width={35}
+          height={35}
           className="cursor-pointer"
         />
       )}

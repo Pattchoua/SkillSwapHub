@@ -15,6 +15,7 @@ import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.model";
 import interaction from "@/database/interaction.model";
+import { FilterQuery } from "mongoose";
 
 // Asynchronous function to create a new question.
 export async function createQuestion(params: CreateQuestionParams) {
@@ -60,7 +61,23 @@ function sort(arg0: { createdAt: number }) {
 export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
-    const questions = await Question.find({})
+
+    const { searchQuery } = params;
+    // Create a default, empty filter query for the database.
+    const query: FilterQuery<typeof Question> = {};
+
+    //If a searchQuery is provided,
+    // Modify the filter query to search for questions where either the title or the content
+    // matches the searchQuery. The search is done in a case-insensitive manner.
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: new RegExp(searchQuery, "i") } },
+        // { content: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+
+    // Retrieve all questions from the database that match the search criteria.
+    const questions = await Question.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
       .sort({ createdAt: -1 });
