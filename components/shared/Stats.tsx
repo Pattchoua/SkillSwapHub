@@ -11,7 +11,7 @@ interface StatsCardProps {
 const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
   return (
     <div className="light-border bacground-light900_dark300 flex flex-wrap items-center justify-start gap-4 rounded-md border p-6 shadow-light-300 dark:shadow-dark-200">
-      <Image src={imgUrl} alt={title} width={40} height={40} />
+      <Image src={imgUrl} alt={title} width={120} height={100} />
       <div>
         <p className="paragraph-semibold text-dark200_light900">{value}</p>
         <p className="body-medium text-dark400_light700">{title}</p>
@@ -49,17 +49,17 @@ const Stats = ({ totalQuestions, totalAnswers }: Props) => {
 
         {/* Display badge statistics using the StatsCard component. */}
         <StatsCard
-          imgUrl="/assets/icons/gold-medal.svg"
+          imgUrl="/assets/icons/gold-medal.png"
           value={0}
           title="Gold Badges"
         />
         <StatsCard
-          imgUrl="/assets/icons/silver-medal.svg"
+          imgUrl="/assets/icons/silver-medal.png"
           value={0}
           title="Silver Badges"
         />
         <StatsCard
-          imgUrl="/assets/icons/bronze-medal.svg"
+          imgUrl="/assets/icons/bronze-medal.png"
           value={0}
           title="Bronze Badges"
         />
