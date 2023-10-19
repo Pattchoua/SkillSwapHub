@@ -24,9 +24,18 @@ import Answers from "@/components/forms/Answers";
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase();
-    //const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const { page = 1, pageSize = 20, filter, searchQuery } = params;
 
-    const users = await User.find({}).sort({ createdAt: -1 });
+    // Create a default, empty filter query for the database.
+    const query: FilterQuery<typeof User> = {};
+
+    if (searchQuery) {
+      query.$or = [
+        { name: { $regex: new RegExp(searchQuery, "i") } },
+        { username: { $regex: new RegExp(searchQuery, "i") } },
+      ];
+    }
+    const users = await User.find(query).sort({ createdAt: -1 });
 
     return { users };
   } catch (error) {
@@ -164,7 +173,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       : {};
 
     // Fetching the User and Their Saved Questions:
-    const user = await User.findOne({ clerkId }).populate({
+    const user = await User.findOne({ clerkId}).populate({
       path: "saved",
       match: query,
       options: {
@@ -228,7 +237,7 @@ export async function getUserQuestions(params: GetUserStatsParams) {
       .populate("tags", "_id name")
       .populate("author", "_id clerkId picture name");
 
-    // Return the total number of questions and the list of questions.  
+    // Return the total number of questions and the list of questions.
     return { totalQuestions, questions: userQuestions };
 
     // error handling
@@ -257,7 +266,7 @@ export async function getUserAnswers(params: GetUserStatsParams) {
       .populate("question", "_id title")
       .populate("author", "_id clerkId picture name");
 
-    // Return the total number of answers and the list of answers.  
+    // Return the total number of answers and the list of answers.
     return { totalAnswers, answers: userAnswers };
 
     // error handling
