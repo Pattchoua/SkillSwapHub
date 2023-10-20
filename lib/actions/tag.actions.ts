@@ -36,7 +36,19 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
-    const tags = await Tag.find({});
+    const { searchQuery } = params;
+
+    // Create a default, empty filter query for the database.
+    const query: FilterQuery<typeof Tag> = {};
+
+    //If a searchQuery is provided,
+    // Modify the filter query to search for questions where the name
+    // matches the searchQuery. The search is done in a case-insensitive manner.
+    if (searchQuery) {
+      query.$or = [{ name: { $regex: new RegExp(searchQuery, "i") } }];
+    }
+
+    const tags = await Tag.find(query);
     return { tags };
   } catch (error) {
     console.log(error);
