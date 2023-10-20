@@ -9,13 +9,16 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import { getQuestions } from "@/lib/actions/question.actions";
 import { SearchParamsProps } from "@/types";
 
+// 'Home' async function component which accepts 'searchParams' as a prop.
 export default async function Home({ searchParams }: SearchParamsProps) {
   const response = await getQuestions({
     searchQuery: searchParams.q,
+    filter: searchParams.filter,
   });
 
   return (
     <>
+      {/* Header section with title and 'Ask a Question' button. */}
       <div className="flex w-full flex-col-reverse justify-between gap-4 sm:flex-row sm:items-center">
         <h1 className="h1-bold text-dark100_light900">All Questions</h1>
         <Link href="/ask-question" className="flex justify-end max-sm:w-full">
@@ -24,6 +27,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           </Button>
         </Link>
       </div>
+
+      {/* Local search bar and filters. */}
       <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchbar
           route="/"
@@ -38,7 +43,11 @@ export default async function Home({ searchParams }: SearchParamsProps) {
           containerClasses="hidden max-md:flex"
         />
       </div>
+
+      {/* Home specific filters. */}
       <HomeFilters />
+
+      {/* Display the questions or a no-result component(ternary conditional). */}
       <div className="mt-10 flex w-full flex-col gap-6">
         {response.questions.length > 0 ? (
           response.questions.map((question) => (

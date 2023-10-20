@@ -21,11 +21,11 @@ const spaceGrotesk = Space_Grotesk({
 
 // metadata for the web page
 export const metadata: Metadata = {
-  title: "SkillSwapHub",
+  title: "XMe",
   description:
     "a community-driven platform that allows users to exchange skills, knowledge, and expertise with others in their local area. It encourages collaboration, learning, and networking within a community.",
   icons: {
-    icon: "/assets/images/site-logo.svg",
+    icon: "/assets/images/site-logo.png",
   },
 };
 

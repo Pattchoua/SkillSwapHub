@@ -28,7 +28,7 @@ const Theme = () => {
               alt="sun"
               height={35}
               width={35}
-              className="active-theme"
+              //className="active-theme"
             />
           ) : (
             <Image

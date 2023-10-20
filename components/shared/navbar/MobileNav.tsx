@@ -68,15 +68,15 @@ const MobileNav = () => {
       >
         <Link href="/" className="flex items-center gap-1">
           <Image
-            src="/assets/images/site-logo.svg"
+            src="/assets/images/site-logo.png"
             width={23}
             height={23}
-            alt="SkillSwapHub"
+            alt="XMe"
           />
           <p className="h2-bold  text-dark100_light900 font-spaceGrotesk">
             {" "}
-            Skill
-            <span className="text-primary-500">SwapHub</span>
+           X
+            <span className="text-primary-500">Me</span>
           </p>
         </Link>
         <div>

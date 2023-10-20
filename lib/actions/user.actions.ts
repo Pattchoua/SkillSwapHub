@@ -18,7 +18,7 @@ import path from "path";
 import Tag from "@/database/tag.model";
 import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
-import Answers from "@/components/forms/Answers";
+
 
 // Asynchronous function to fetch all Users
 export async function getAllUsers(params: GetAllUsersParams) {
@@ -35,7 +35,23 @@ export async function getAllUsers(params: GetAllUsersParams) {
         { username: { $regex: new RegExp(searchQuery, "i") } },
       ];
     }
-    const users = await User.find(query).sort({ createdAt: -1 });
+
+    // Initialize an empty object to hold sorting options based on the 'filter' provided.
+    let sortOptions = {};
+
+    switch (filter) {
+      case "new users":
+        sortOptions = { joinedAt: -1 };
+      case "old users":
+        sortOptions = { joinedAt: 1 };
+        break;
+      case "top contributors":
+        query.answers = { reputation: -1 };
+        break;
+      default:
+        break;
+    }
+    const users = await User.find(query).sort(sortOptions);
 
     return { users };
   } catch (error) {
@@ -173,7 +189,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       : {};
 
     // Fetching the User and Their Saved Questions:
-    const user = await User.findOne({ clerkId}).populate({
+    const user = await User.findOne({ clerkId }).populate({
       path: "saved",
       match: query,
       options: {

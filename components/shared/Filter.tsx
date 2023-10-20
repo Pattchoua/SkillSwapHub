@@ -7,7 +7,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { formUrlQuery } from "@/lib/utils";
 import { Item } from "@radix-ui/react-select";
+import { useRouter, useSearchParams } from "next/navigation";
 
 interface Props {
   filters: {
@@ -19,9 +21,31 @@ interface Props {
 }
 
 const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
+  // Hook to get URL search parameters and to handle client-side navigation
+  const searchParams = useSearchParams();
+  const router = useRouter();
+
+  // Retrieve the 'filter' search parameter from the URL.
+  const paramFilter = searchParams.get("filter");
+
+  // Handler to update the URL parameters when a filter is selected.
+  const handleUpdateParams = (value: string) => {
+    const newUrl = formUrlQuery({
+      params: searchParams.toString(),
+      key: "filter",
+      value,
+    });
+    // Update the URL without scrolling.
+    router.push(newUrl, { scroll: false });
+  };
+
+  // Render the filter dropdown.
   return (
     <div className={`relative ${containerClasses}`}>
-      <Select>
+      <Select
+        onValueChange={handleUpdateParams}
+        defaultValue={paramFilter || undefined}
+      >
         <SelectTrigger
           className={`${otherClasses} body-regular light-border background-light800_dark300 text-dark500_light700 border px-5 py-2.5`}
         >
@@ -31,13 +55,11 @@ const Filter = ({ filters, otherClasses, containerClasses }: Props) => {
         </SelectTrigger>
         <SelectContent>
           <SelectGroup>
-            {filters.map((item)=>(
+            {filters.map((item) => (
               <SelectItem key={item.value} value={item.value}>
-                  {item.name}
+                {item.name}
               </SelectItem>
-
             ))}
-            
           </SelectGroup>
         </SelectContent>
       </Select>

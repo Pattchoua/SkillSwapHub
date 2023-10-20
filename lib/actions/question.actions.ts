@@ -62,25 +62,38 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery } = params;
+    const { searchQuery, filter } = params;
     // Create a default, empty filter query for the database.
     const query: FilterQuery<typeof Question> = {};
 
-    //If a searchQuery is provided,
-    // Modify the filter query to search for questions where either the title or the content
-    // matches the searchQuery. The search is done in a case-insensitive manner.
+    //If a searchQuery is provided,Modify the filter query to search for questions where the title matches
     if (searchQuery) {
       query.$or = [
         { title: { $regex: new RegExp(searchQuery, "i") } },
         // { content: { $regex: new RegExp(searchQuery, "i") } },
       ];
     }
+  // Initialize an empty object to hold sorting options based on the 'filter' provided.
+    let sortOptions = {};
 
-    // Retrieve all questions from the database that match the search criteria.
+    switch (filter) {
+      case "newest":
+        sortOptions = { createdAt: -1 }; //sort the questions by their creation date in descending order
+      case "frequent":
+        sortOptions = { views: -1 };//sort the questions by views in descending order.
+        break;
+      case "unanswered":
+        query.answers = { $size: 0 }; //retrieve questions that have no answers.
+        break;
+      default:
+        break;
+    }
+
+    // Retrieve all questions from the database that match the search and filter criteria.
     const questions = await Question.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
-      .sort({ createdAt: -1 });
+      .sort(sortOptions);
 
     return { questions };
   } catch (error) {
