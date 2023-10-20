@@ -14,7 +14,7 @@ interface Props {
   questionId: string;
   userId: string;
   page?: number;
-  filter?: number;
+  filter?: string;
 }
 
 // The main AllAnswers component
@@ -26,7 +26,12 @@ const AllAnswers = async ({
   filter,
 }: Props) => {
   // Fetch answers based on the question ID.
-  const response = await getAnswers({ questionId });
+  const response = await getAnswers({ 
+    questionId,
+    page: page ? +page : 1,
+    sortBy: filter, 
+  
+  });
 
   return (
     <div className="mt-11">

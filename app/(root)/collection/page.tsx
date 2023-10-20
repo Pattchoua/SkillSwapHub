@@ -7,13 +7,14 @@ import { getSavedQuestions } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs";
 import { SearchParamsProps } from "@/types";
 
-export default async function Home({searchParams}:SearchParamsProps) {
-  
+export default async function Home({ searchParams }: SearchParamsProps) {
   const { userId } = auth();
   if (!userId) return null;
 
   const response = await getSavedQuestions({
-    clerkId: userId,searchQuery: searchParams.q
+    clerkId: userId,
+    searchQuery: searchParams.q,
+    filter: searchParams.filter,
   });
 
   return (
@@ -25,7 +26,7 @@ export default async function Home({searchParams}:SearchParamsProps) {
         <LocalSearchbar
           route="/"
           iconPosition="left"
-          imgSrc="/assets/icons/search.svg"
+          imgSrc="/assets/icons/search.png"
           otherClasses="flex-1"
           placeholder="Search for questions"
         />

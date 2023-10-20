@@ -7,21 +7,23 @@ import Votes from "@/components/shared/Votes";
 import { getQuestionsById } from "@/lib/actions/question.actions";
 import { getUserById } from "@/lib/actions/user.actions";
 import { formatNumber, getTimestamp } from "@/lib/utils";
+import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+
 interface ParamsType {
   id: string;
-  // ... other properties
+}
+interface PageProps {
+  params: ParamsType;
+  // searchParams: SearchParamsProps; 
 }
 
-const page = async ({ params }: { params: ParamsType }) => {
-  // Fetching the question based on the provided ID.
-  const response = await getQuestionsById({
-    questionId: params.id,
-  });
+const page = async ({ params, searchParams }: PageProps) => {
+ 
 
   // Getting the user ID from Clerk authentication.
   const { userId: clerkId } = auth();
@@ -30,6 +32,9 @@ const page = async ({ params }: { params: ParamsType }) => {
   if (clerkId) {
     mongoUser = await getUserById({ userId: clerkId });
   }
+
+   // Fetching the question based on the provided ID.
+   const response = await getQuestionsById({questionId: params.id});
 
   return (
     <>
@@ -116,6 +121,8 @@ const page = async ({ params }: { params: ParamsType }) => {
         questionId={response._id}
         userId={mongoUser._id}
         totalAnswers={response.answers.length}
+        page={searchParams?.page}
+        filter ={searchParams?.filter}
       />
 
       {/* create and submit an answer. */}

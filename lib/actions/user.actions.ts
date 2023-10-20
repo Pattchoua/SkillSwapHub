@@ -19,7 +19,6 @@ import Tag from "@/database/tag.model";
 import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
 
-
 // Asynchronous function to fetch all Users
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
@@ -179,7 +178,7 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       clerkId,
       // page = 1,
       // pageSize = 10,
-      // filter,
+      filter,
       searchQuery,
     } = params;
 
@@ -188,12 +187,34 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       ? { title: { $regex: new RegExp(searchQuery, "i") } }
       : {};
 
+    // Initialize an empty object to hold sorting options based on the 'filter' provided.
+    let sortOptions = {};
+
+    switch (filter) {
+      case "most_recent":
+        sortOptions = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortOptions = { createdAt: 1 };
+        break;
+      case "most_voted":
+        sortOptions = { upvotes: -1 };
+        break;
+      case "most_viewed":
+        sortOptions = { views: -1 };
+      case "most_answered":
+        sortOptions = { answers: -1 };
+        break;
+      default:
+        break;
+    }
+
     // Fetching the User and Their Saved Questions:
     const user = await User.findOne({ clerkId }).populate({
       path: "saved",
       match: query,
       options: {
-        sort: { createdAt: -1 },
+        sort: sortOptions,
       },
       populate: [
         { path: "tags", model: Tag, select: "_id name" },

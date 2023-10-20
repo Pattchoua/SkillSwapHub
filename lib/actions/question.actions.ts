@@ -73,14 +73,15 @@ export async function getQuestions(params: GetQuestionsParams) {
         // { content: { $regex: new RegExp(searchQuery, "i") } },
       ];
     }
-  // Initialize an empty object to hold sorting options based on the 'filter' provided.
+    // Initialize an empty object to hold sorting options based on the 'filter' provided.
     let sortOptions = {};
 
     switch (filter) {
       case "newest":
         sortOptions = { createdAt: -1 }; //sort the questions by their creation date in descending order
+        break;
       case "frequent":
-        sortOptions = { views: -1 };//sort the questions by views in descending order.
+        sortOptions = { views: -1 }; //sort the questions by views in descending order.
         break;
       case "unanswered":
         query.answers = { $size: 0 }; //retrieve questions that have no answers.
