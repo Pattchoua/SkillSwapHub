@@ -23,7 +23,10 @@ import Answer from "@/database/answer.model";
 export async function getAllUsers(params: GetAllUsersParams) {
   try {
     connectToDatabase();
-    const { page = 1, pageSize = 20, filter, searchQuery } = params;
+    const { page = 1, pageSize = 10, filter, searchQuery } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
 
     // Create a default, empty filter query for the database.
     const query: FilterQuery<typeof User> = {};
@@ -50,7 +53,16 @@ export async function getAllUsers(params: GetAllUsersParams) {
       default:
         break;
     }
-    const users = await User.find(query).sort(sortOptions);
+    const users = await User.find(query)
+      .skip(skipAmount)
+      .limit(pageSize)
+      .sort(sortOptions);
+
+    // Get the total count of questions matching the query.
+    const totalUsers = await User.countDocuments(query);
+
+    // Determine if there are more questions available for the next page.
+    const isNext = totalUsers > skipAmount + users.length;
 
     return { users };
   } catch (error) {
@@ -174,13 +186,10 @@ export async function toggleSaveQuestion(params: ToggleSaveQuestionParams) {
 export async function getSavedQuestions(params: GetSavedQuestionsParams) {
   try {
     connectToDatabase();
-    const {
-      clerkId,
-      // page = 1,
-      // pageSize = 10,
-      filter,
-      searchQuery,
-    } = params;
+    const { clerkId, page = 1, pageSize = 5, filter, searchQuery } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
 
     // Building the query for fetching questions
     const query: FilterQuery<typeof Question> = searchQuery
@@ -214,6 +223,8 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
       path: "saved",
       match: query,
       options: {
+        skip: skipAmount,
+        limit: pageSize + 1,
         sort: sortOptions,
       },
       populate: [
@@ -224,9 +235,13 @@ export async function getSavedQuestions(params: GetSavedQuestionsParams) {
     if (!user) {
       throw new Error("User not found");
     }
+
+    // Determine if there are more users available for the next page.
+    const isNext = user.saved.length > pageSize;
+
     // Returning Saved Questions:
     const savedQuestions = user.saved;
-    return { questions: savedQuestions };
+    return { questions: savedQuestions, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -259,23 +274,26 @@ export async function getUserInfo(params: GetUserByIdParams) {
 export async function getUserQuestions(params: GetUserStatsParams) {
   try {
     connectToDatabase();
-    const {
-      userId,
-      // page = 1,
-      // pageSize = 10,
-    } = params;
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
 
     // Get the total number of questions authored by the user.
     const totalQuestions = await Question.countDocuments({ author: userId });
 
     // Fetch the questions authored by the user
     const userQuestions = await Question.find({ author: userId })
+      .skip(skipAmount)
+      .limit(pageSize + 1)
       .sort({ views: -1, upvotes: -1 })
       .populate("tags", "_id name")
       .populate("author", "_id clerkId picture name");
 
+    const isNextQuestion = totalQuestions > skipAmount + userQuestions.length;
+
     // Return the total number of questions and the list of questions.
-    return { totalQuestions, questions: userQuestions };
+    return { totalQuestions, questions: userQuestions, isNextQuestion };
 
     // error handling
   } catch (error) {
@@ -288,23 +306,26 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 export async function getUserAnswers(params: GetUserStatsParams) {
   try {
     connectToDatabase();
-    const {
-      userId,
-      // page = 1,
-      // pageSize = 10,
-    } = params;
+    const { userId, page = 1, pageSize = 10 } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
 
     // Get the total number of answers authored by the user.
     const totalAnswers = await Answer.countDocuments({ author: userId });
 
     // Fetch the answers authored by the user
     const userAnswers = await Answer.find({ author: userId })
+      .skip(skipAmount)
+      .limit(pageSize + 1)
       .sort({ views: -1, upvotes: -1 })
       .populate("question", "_id title")
       .populate("author", "_id clerkId picture name");
 
+      const isNextAnswers = totalAnswers > skipAmount + userAnswers.length;
+
     // Return the total number of answers and the list of answers.
-    return { totalAnswers, answers: userAnswers };
+    return { totalAnswers, answers: userAnswers, isNextAnswers };
 
     // error handling
   } catch (error) {

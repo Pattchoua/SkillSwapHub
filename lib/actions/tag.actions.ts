@@ -36,7 +36,10 @@ export async function getTopInteractedTags(params: GetTopInteractedTagsParams) {
 export async function getAllTags(params: GetAllTagsParams) {
   try {
     connectToDatabase();
-    const { searchQuery, filter } = params;
+    const { searchQuery, filter, page = 1, pageSize = 10 } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
 
     // Create a default, empty filter query for the database.
     const query: FilterQuery<typeof Tag> = {};
@@ -66,8 +69,18 @@ export async function getAllTags(params: GetAllTagsParams) {
         break;
     }
 
-    const tags = await Tag.find(query).sort(sortOptions);
-    return { tags };
+    const tags = await Tag.find(query)
+      .sort(sortOptions)
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    // Get the total count of tags matching the query.
+    const totalTags = await Tag.countDocuments(query);
+
+    // Determine if there are more tags available for the next page.
+    const isNext = totalTags > skipAmount + tags.length;
+
+    return { tags, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -78,12 +91,10 @@ export async function getAllTags(params: GetAllTagsParams) {
 export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
   try {
     connectToDatabase();
-    const {
-      tagId,
-      // page = 1,
-      // pageSize = 10,
-      searchQuery,
-    } = params;
+    const { tagId, page = 1, pageSize = 10, searchQuery } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
 
     // Filter query to find the tag by its ID.
     const tagFilter: FilterQuery<ITag> = { _id: tagId };
@@ -100,6 +111,8 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
 
       // Sort the populated questions in descending order by their creation date.
       options: {
+        skip: skipAmount,
+        limit: pageSize + 1,
         sort: { createdAt: -1 },
       },
 
@@ -112,11 +125,15 @@ export async function getQuestionsByTagId(params: GetQuestionsByTagIdParams) {
     if (!tag) {
       throw new Error("Tag not found");
     }
+
+    // Determine if there are more users available for the next page.
+    const isNext = tag.questions.length > pageSize;
+
     // Extract the questions associated with the retrieved tag.
     const questions = tag.questions;
 
     // Return the tag's name and its associated questions.
-    return { tagTitle: tag.name, questions };
+    return { tagTitle: tag.name, questions, isNext };
 
     // error handling
   } catch (error) {

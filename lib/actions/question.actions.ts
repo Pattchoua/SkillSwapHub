@@ -62,7 +62,11 @@ export async function getQuestions(params: GetQuestionsParams) {
   try {
     connectToDatabase();
 
-    const { searchQuery, filter } = params;
+    const { searchQuery, filter, page = 1, pageSize = 3 } = params;
+
+    // Calculate the number of posts to skip based on the page nunber and size
+    const skipAmount = (page - 1) * pageSize;
+
     // Create a default, empty filter query for the database.
     const query: FilterQuery<typeof Question> = {};
 
@@ -94,9 +98,17 @@ export async function getQuestions(params: GetQuestionsParams) {
     const questions = await Question.find(query)
       .populate({ path: "tags", model: Tag })
       .populate({ path: "author", model: User })
+      .skip(skipAmount)
+      .limit(pageSize)
       .sort(sortOptions);
 
-    return { questions };
+    // Get the total count of questions matching the query.
+    const totalQuestions = await Question.countDocuments(query);
+
+    // Determine if there are more questions available for the next page.
+    const isNext = totalQuestions > skipAmount + questions.length;
+
+    return { questions, isNext };
   } catch (error) {
     console.log(error);
     throw error;
@@ -269,4 +281,7 @@ export async function getTopQuestions() {
     console.log(error);
     throw error;
   }
+}
+function limit(pageSize: number) {
+  throw new Error("Function not implemented.");
 }

@@ -7,7 +7,6 @@ import Votes from "@/components/shared/Votes";
 import { getQuestionsById } from "@/lib/actions/question.actions";
 import { getUserById } from "@/lib/actions/user.actions";
 import { formatNumber, getTimestamp } from "@/lib/utils";
-import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 import Image from "next/image";
 import Link from "next/link";
@@ -34,7 +33,9 @@ const page = async ({ params, searchParams }: PageProps) => {
   }
 
    // Fetching the question based on the provided ID.
-   const response = await getQuestionsById({questionId: params.id});
+   const response = await getQuestionsById({
+    questionId: params.id,
+  });
 
   return (
     <>

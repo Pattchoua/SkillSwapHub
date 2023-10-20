@@ -7,6 +7,7 @@ import Image from "next/image";
 import { getTimestamp } from "@/lib/utils";
 import ParseHTML from "./ParseHTML";
 import Votes from "./Votes";
+import Pagination from "./Pagination";
 
 // Define the props for the AllAnswers component
 interface Props {
@@ -89,7 +90,14 @@ const AllAnswers = async ({
           </article>
         ))}
       </div>
+      <div className="mt-10 w-full">
+        <Pagination
+          pageNumber={page ? +page : 1}
+          isNext={response.isNextAnswer}
+        />
+      </div>
     </div>
+  
   );
 };
 

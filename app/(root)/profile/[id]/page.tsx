@@ -16,7 +16,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
   const { userId: clerkId } = auth();
 
   // Fetch the user information based on the provided ID
-  const userInfo = await getUserInfo({ userId: params.id });
+  const userInfo = await getUserInfo({
+     userId: params.id, 
+    });
 
   return (
     <>

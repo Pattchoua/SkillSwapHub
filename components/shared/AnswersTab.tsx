@@ -5,17 +5,18 @@ import { SearchParamsProps } from '@/types';
 import React from 'react'
 import AnswerCard from '../cards/AnswerCard';
 import { Item } from '@radix-ui/react-menubar';
+import Pagination from './Pagination';
 
 
 interface Props extends SearchParamsProps {
     userId: string;
     clerkId?: string | null;
 }
-const AnswersTab = async ({searchProps, userId, clerkId}:Props) => {
+const AnswersTab = async ({searchParams, userId, clerkId}:Props) => {
 
     const response = await getUserAnswers({
 userId,
-page:1,
+page: searchParams.page ? +searchParams.page : 1,
     })
   return (
     <>
@@ -30,6 +31,10 @@ page:1,
         createdAt={item.createdAt}
         />
     ))}
+     <Pagination
+          pageNumber={searchParams?.page ? +searchParams.page : 1}
+          isNext={response.isNextAnswers}
+        />
     </>
   )
 }
