@@ -8,7 +8,8 @@ import React, { useState } from "react";
 const GlobalFilters = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
-
+  
+// Extract the 'type' parameter from the URL and initialize the active state with it
   const typeParams = searchParams.get("type");
   const [active, setActive] = useState(typeParams || "");
 

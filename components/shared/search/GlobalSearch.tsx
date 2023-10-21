@@ -8,9 +8,12 @@ import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
 import GlobalResults from "./GlobalResults";
 
 const GlobalSearch = () => {
+  // Access the current router object, the pathname, and the search parameters.
   const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
+
+  // Create a reference for the search container.
   const searchContainerRef = useRef(null);
 
   // Get the current query parameter for the search.
@@ -20,6 +23,7 @@ const GlobalSearch = () => {
   const [search, setSearch] = useState(query || "");
   const [isOpen, setIsOpen] = useState(false);
 
+  // Effect hook to close search and reset input value when clicking outside.
   useEffect(() => {
     const handleOutsideClick = (event: any) => {
       if (
@@ -33,9 +37,10 @@ const GlobalSearch = () => {
     };
 
     setIsOpen(false);
-
+    // Add an event listener for clicks on the document.
     document.addEventListener("click", handleOutsideClick);
 
+    // Clean up the listener on component unmount.
     return () => {
       document.removeEventListener("click", handleOutsideClick);
     };
@@ -44,6 +49,7 @@ const GlobalSearch = () => {
   // useEffect hook to listens changes in the search input value.
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
+      // If there's a search value, update the URL accordingly.
       if (search) {
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
@@ -52,6 +58,7 @@ const GlobalSearch = () => {
         });
         router.push(newUrl, { scroll: false });
       } else {
+        // If the search is cleared and there was a query, remove related keys from the URL.
         if (query) {
           const newUrl = removeKeysFromQuery({
             params: searchParams.toString(),
@@ -61,6 +68,7 @@ const GlobalSearch = () => {
         }
       }
     }, 500);
+     // Clear the timeout when the component or dependencies update.
     return () => clearTimeout(delayDebounceFn);
   }, [search, router, pathname, searchParams, query]);
 
