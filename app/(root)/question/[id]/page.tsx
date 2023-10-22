@@ -7,6 +7,7 @@ import Votes from "@/components/shared/Votes";
 import { getQuestionsById } from "@/lib/actions/question.actions";
 import { getUserById } from "@/lib/actions/user.actions";
 import { formatNumber, getTimestamp } from "@/lib/utils";
+import { SearchParamsProps } from "@/types";
 import { auth } from "@clerk/nextjs";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -19,15 +20,8 @@ export const metadata: Metadata = {
     "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
 };
 
-interface ParamsType {
-  id: string;
-}
-interface PageProps {
-  params: ParamsType;
-  // searchParams: SearchParamsProps;
-}
 
-const page = async ({ params, searchParams }: PageProps) => {
+const Page = async ({ params, searchParams }: any) => {
   // Getting the user ID from Clerk authentication.
   const { userId: clerkId } = auth();
   let mongoUser;
@@ -140,4 +134,4 @@ const page = async ({ params, searchParams }: PageProps) => {
   );
 };
 
-export default page;
+export default Page;

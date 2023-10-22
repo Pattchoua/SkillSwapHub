@@ -8,17 +8,13 @@ import { SearchParamsProps } from "@/types";
 import { Metadata } from "next";
 import Link from "next/link";
 
-
 export const metadata: Metadata = {
   title: "Community | XMe",
   description:
     "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
 };
 
-  
-
-const Page = async ({searchParams}: SearchParamsProps) => {
-
+const Page = async ({ searchParams }: SearchParamsProps) => {
   // Fetch all users based on the search query or filter provided in the 'searchParams'.
   const response = await getAllUsers({
     searchQuery: searchParams.q,
@@ -28,11 +24,11 @@ const Page = async ({searchParams}: SearchParamsProps) => {
 
   return (
     <>
-    {/* page header */}
+      {/* page header */}
       <h1 className="h1-bold text-dark100_light900">All Users</h1>
 
       {/* Render the search bar and filter components */}
-      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center"> 
+      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
         <LocalSearchbar
           route="/community"
           iconPosition="left"
@@ -50,7 +46,7 @@ const Page = async ({searchParams}: SearchParamsProps) => {
       conditional rendering */}
       <section className="mt-12 flex flex-wrap gap-4">
         {response.users.length > 0 ? (
-          response.users.map((user) => < UserCard key={user._id} user={user}/>)
+          response.users.map((user) => <UserCard key={user._id} user={user} />)
         ) : (
           <div className="paragraph-regular text-dark200_light800 mx-auto max-w-4xl text-center">
             <p>Not User Yet</p>
@@ -63,7 +59,7 @@ const Page = async ({searchParams}: SearchParamsProps) => {
       <div className="mt-10">
         <Pagination
           pageNumber={searchParams?.page ? +searchParams.page : 1}
-          isNext={response.isNext}
+          isNext={(response as any).isNext}
         />
       </div>
     </>

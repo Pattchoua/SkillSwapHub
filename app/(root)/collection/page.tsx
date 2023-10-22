@@ -9,13 +9,11 @@ import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
 import { Metadata } from "next";
 
-
 export const metadata: Metadata = {
   title: "Collection| XMe",
   description:
     "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
 };
-
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { userId } = auth();
@@ -26,7 +24,6 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     searchQuery: searchParams.q,
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
-
   });
 
   return (
@@ -51,7 +48,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       {/* displaying the saved questions */}
       <div className="mt-10 flex w-full flex-col gap-6">
         {response.questions.length > 0 ? (
-          response.questions.map((question) => (
+          response.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}

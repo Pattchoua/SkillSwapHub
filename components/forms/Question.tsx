@@ -36,7 +36,7 @@ const Question = ({ type, questionDetails, mongoUserId }: Props) => {
 
   const parsedQuestionDetails = JSON.parse(questionDetails || "{}");
 
-  const groupedTags = parsedQuestionDetails.tags?.map((tag) => tag.name) || [];
+  const groupedTags = parsedQuestionDetails.tags?.map((tag: any) => tag.name) || [];
 
   console.log(parsedQuestionDetails.content);
   // Set up the form with React Hook Form and Zod validation.

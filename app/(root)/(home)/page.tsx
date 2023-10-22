@@ -46,7 +46,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
       page: searchParams.page ? +searchParams.page : 1,
     });
   }
-
+  // If response has questions or it's an empty array
+  const questions = (response as any )?.questions  || [];
   return (
     <>
       {/* Header section with title and 'Ask a Question' button. */}
@@ -80,8 +81,8 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
       {/* Display the questions or a no-result component(ternary conditional). */}
       <div className="mt-10 flex w-full flex-col gap-6">
-      {response && response.questions && response.questions.length > 0 ? (
-          response.questions.map((question) => (
+        {questions.length > 0 ? (
+          questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}

@@ -102,5 +102,5 @@ export async function POST(req: Request) {
   }
 
   // If none of the above conditions are met, return a generic 201 Created response.
-  return new Response("", { status: 201 });
+  return NextResponse.json({ message: "OK"});
 }

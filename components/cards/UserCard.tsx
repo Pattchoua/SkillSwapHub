@@ -48,7 +48,6 @@ const UserCard = async ({ user }: Props) => {
                   key={tag._id}
                   _id={tag._id}
                   name={tag.name}
-                  totalQuestions={0}
                   showCount={false}
                 />
               ))}

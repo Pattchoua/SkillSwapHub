@@ -1,8 +1,6 @@
 import { getQuestionsByTagId } from "@/lib/actions/tag.actions";
 import React from "react";
-import page from "../page";
 import LocalSearchbar from "@/components/shared/search/LocalSearchbar";
-import { IQuestion } from "@/database/question.model";
 import QuestionCard from "@/components/cards/QuestionCard";
 import { URLProps } from "@/types";
 import NoResult from "@/components/shared/NoResult";
@@ -39,7 +37,7 @@ const Page = async ({ params, searchParams }: URLProps) => {
       {/* displaying the saved questions */}
       <div className="mt-10 flex w-full flex-col gap-6">
         {response.questions.length > 0 ? (
-          response.questions.map((question: IQuestion) => (
+          response.questions.map((question: any) => (
             <QuestionCard
               key={question._id}
               _id={question._id}
