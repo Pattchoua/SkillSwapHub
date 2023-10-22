@@ -67,7 +67,7 @@ const QuestionCard = ({
             _id={tag._id}
             name={tag.name}
             showCount={true}
-            totalQuestions={0}
+           
           />
         ))}
       </div>

@@ -17,8 +17,8 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
   // Fetch the user information based on the provided ID
   const userInfo = await getUserInfo({
-     userId: params.id, 
-    });
+    userId: params.id,
+  });
 
   return (
     <>
@@ -43,15 +43,14 @@ const Page = async ({ params, searchParams }: URLProps) => {
             </p>
             {/* Display user's portfolio link and join date */}
             <div className="mt-5 flex flex-wrap items-center justify-start gap-1.5">
-              
-            {userInfo.user.location && (
+              {userInfo.user.location && (
                 <ProfileLink
                   imgUrl="/assets/icons/link.svg"
                   href={userInfo.user.portfolioWebsite}
                   title="Portfolio"
                 />
               )}
-              
+
               {userInfo.user.location && (
                 <ProfileLink
                   imgUrl="/assets/icons/location.svg"
@@ -83,8 +82,10 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
       {/* Display the user's stats (e.g., total questions and answers) */}
       <Stats
+        reputation={userInfo.reputation}
         totalQuestions={userInfo.totalQuestions}
         totalAnswers={userInfo.totalAnswers}
+        badges={userInfo.badgeCounts}
       />
 
       {/* Tabs section for "Top Posts" and "Answers" */}

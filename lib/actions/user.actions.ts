@@ -18,6 +18,8 @@ import path from "path";
 import Tag from "@/database/tag.model";
 import { FilterQuery } from "mongoose";
 import Answer from "@/database/answer.model";
+import { BadgeCriteriaType } from "@/types";
+import { assignBadges } from "../utils";
 
 // Asynchronous function to fetch all Users
 export async function getAllUsers(params: GetAllUsersParams) {
@@ -253,15 +255,92 @@ export async function getUserInfo(params: GetUserByIdParams) {
   try {
     connectToDatabase();
     const { userId } = params;
+
     // Fetch the user from the database using the 'userId' as the 'clerkId'
     const user = await User.findOne({ clerkId: userId });
+
+    // If the user was not found, throw an error
     if (!user) {
       throw new Error("user not found");
     }
+
     // Count the total number of questions and Answers authored by the user and retrurn them along with the user details
     const totalQuestions = await Question.countDocuments({ author: user._id });
     const totalAnswers = await Answer.countDocuments({ author: user._id });
-    return { user, totalQuestions, totalAnswers };
+
+    // Calculate the total upvotes the user has received for their questions
+    const [questionUpvotes] = await Question.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" }, // Count the size of the upvotes array for each question
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" }, // Sum up the upvote counts
+        },
+      },
+    ]);
+
+    // Calculate the total upvotes the user has received for their answers
+    const [answerUpvotes] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      {
+        $project: {
+          _id: 0,
+          upvotes: { $size: "$upvotes" },
+        },
+      },
+      {
+        $group: {
+          _id: null,
+          totalUpvotes: { $sum: "$upvotes" },
+        },
+      },
+    ]);
+
+    // Calculate the total views the user has received for their questions
+    const [questionViews] = await Answer.aggregate([
+      { $match: { author: user._id } },
+      {
+        $group: {
+          _id: null,
+          totalViews: { $sum: "$views" },
+        },
+      },
+    ]);
+
+    // Construct a criteria array with different metrics about the user's activity
+    const criteria = [
+      { type: "QUESTION_COUNT" as BadgeCriteriaType, count: totalQuestions },
+      { type: "ANSWER_COUNT" as BadgeCriteriaType, count: totalAnswers },
+      {
+        type: "QUESTION_UPVOTES" as BadgeCriteriaType,
+        count: questionUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "ANSWER_UPVOTES" as BadgeCriteriaType,
+        count: answerUpvotes?.totalUpvotes || 0,
+      },
+      {
+        type: "TOTAL_VIEWS" as BadgeCriteriaType,
+        count: questionViews?.totalViews || 0,
+      },
+    ];
+
+    // Calculate badge counts for the user based on the constructed criteria
+    const badgeCounts = assignBadges({ criteria });
+
+    return {
+      user,
+      totalQuestions,
+      totalAnswers,
+      badgeCounts,
+      reputation: user.reputation,
+    };
 
     // error handling
   } catch (error) {
@@ -274,7 +353,7 @@ export async function getUserInfo(params: GetUserByIdParams) {
 export async function getUserQuestions(params: GetUserStatsParams) {
   try {
     connectToDatabase();
-    const { userId, page = 1, pageSize = 10 } = params;
+    const { userId, page = 1, pageSize = 5 } = params;
 
     // Calculate the number of posts to skip based on the page nunber and size
     const skipAmount = (page - 1) * pageSize;
@@ -306,7 +385,7 @@ export async function getUserQuestions(params: GetUserStatsParams) {
 export async function getUserAnswers(params: GetUserStatsParams) {
   try {
     connectToDatabase();
-    const { userId, page = 1, pageSize = 10 } = params;
+    const { userId, page = 1, pageSize = 5 } = params;
 
     // Calculate the number of posts to skip based on the page nunber and size
     const skipAmount = (page - 1) * pageSize;

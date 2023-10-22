@@ -1,4 +1,5 @@
 import { formatNumber } from "@/lib/utils";
+import { BadgeCounts } from "@/types";
 import Image from "next/image";
 import React from "react";
 
@@ -23,14 +24,19 @@ const StatsCard = ({ imgUrl, value, title }: StatsCardProps) => {
 interface Props {
   totalQuestions: number;
   totalAnswers: number;
+  badges: BadgeCounts;
+  reputation: number;
 }
 
 // Stats component, which displays statistics such as total questions, total answers, and badge counts.
-const Stats = ({ totalQuestions, totalAnswers }: Props) => {
+const Stats = ({ totalQuestions, totalAnswers, badges, reputation }: Props) => {
   return (
     <div className="mt-10">
       {/* Display total questions and answers  */}
-      <h4 className="h3-semibold text-dark200_light900">Stats</h4>
+      <h4 className="h3-semibold text-dark200_light900">
+        Your Stats:{" "}
+        <span className="text-primary-500 semibold">{reputation}</span> 
+      </h4>
       <div className="mt-5 grid grid-cols-1 gap-5 xs:grid-cols-2 md:grid-cols-4">
         <div className="light-border bacground-light900_dark300 flex flex-wrap items-center justify-evently gap-4 rounded-md border p-6 shadow-light-300 dark:shadow-dark-200">
           <div>
@@ -50,17 +56,17 @@ const Stats = ({ totalQuestions, totalAnswers }: Props) => {
         {/* Display badge statistics using the StatsCard component. */}
         <StatsCard
           imgUrl="/assets/icons/gold-medal.png"
-          value={0}
+          value={badges.GOLD}
           title="Gold Badges"
         />
         <StatsCard
           imgUrl="/assets/icons/silver-medal.png"
-          value={0}
+          value={badges.BRONZE}
           title="Silver Badges"
         />
         <StatsCard
           imgUrl="/assets/icons/bronze-medal.png"
-          value={0}
+          value={badges.SILVER}
           title="Bronze Badges"
         />
       </div>

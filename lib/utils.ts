@@ -1,3 +1,5 @@
+import { BADGE_CRITERIA } from "@/constants";
+import { BadgeCounts } from "@/types";
 import { type ClassValue, clsx } from "clsx";
 import qs from "query-string";
 import { twMerge } from "tailwind-merge";
@@ -129,4 +131,45 @@ export const removeKeysFromQuery = ({
     },
     { skipNull: true }
   );
+};
+
+//TODO: Function assignBadges
+// The BadgeParam interface describes the shape of the `params` object that the `assignBadges` function expects.
+// This interface has a single property `criteria` which is an array.
+// Each item in the array should have a `type` which should be one of the keys of the BADGE_CRITERIA object, and a `count` which is a number.
+interface BadgeParam {
+  criteria: {
+    type: keyof typeof BADGE_CRITERIA;
+    count: number;
+  }[];
+}
+
+export const assignBadges = (params: BadgeParam) => {
+  // badgeCounts object initializes counts of GOLD, SILVER, and BRONZE badges to 0.
+  const badgeCounts: BadgeCounts = {
+    GOLD: 0,
+    SILVER: 0,
+    BRONZE: 0,
+  };
+
+  // Destructure the `criteria` from the `params` object.
+  const { criteria } = params;
+
+  // For each item in the `criteria` array:
+  criteria.forEach((item) => {
+    // Destructure the `type` and `count` properties from the `item`.
+    const { type, count } = item;
+    // Get the badge levels  for the current `type` from the BADGE_CRITERIA object
+    const badgeLevels: any = BADGE_CRITERIA[type];
+
+    // For each level in the badge levels:
+    Object.keys(badgeLevels).forEach((level: any) => {
+      // Check if the current `count` is greater than or equal to the threshold for this badge level.
+      if (count >= badgeLevels[level]) {
+        // increment the badge count for the particular level
+        badgeCounts[level as keyof BadgeCounts] += 1;
+      }
+    });
+  });
+  return badgeCounts;
 };
