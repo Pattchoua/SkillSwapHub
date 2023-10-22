@@ -3,6 +3,13 @@ import { auth } from "@clerk/nextjs";
 import { redirect } from "next/navigation";
 import React from "react";
 import { getUserById } from "@/lib/actions/user.actions";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "Ask-Question | XMe",
+  description:
+    "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
+};
 
 const Page = async () => {
   const { userId } = auth();

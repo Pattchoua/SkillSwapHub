@@ -6,17 +6,46 @@ import { HomePageFilters } from "@/constants/filters";
 import HomeFilters from "@/components/home/HomeFilters";
 import NoResult from "@/components/shared/NoResult";
 import QuestionCard from "@/components/cards/QuestionCard";
-import { getQuestions } from "@/lib/actions/question.actions";
+import {
+  getQuestions,
+  getrecommendedQuestions,
+} from "@/lib/actions/question.actions";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import { Metadata } from "next";
+import { auth } from "@clerk/nextjs";
+
+export const metadata: Metadata = {
+  title: "Home | XMe",
+  description:
+    "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
+};
 
 // 'Home' async function component which accepts 'searchParams' as a prop.
 export default async function Home({ searchParams }: SearchParamsProps) {
-  const response = await getQuestions({
-    searchQuery: searchParams.q,
-    filter: searchParams.filter,
-    page: searchParams.page ? +searchParams.page : 1,
-  });
+  const { userId } = auth();
+  let response;
+
+  if (searchParams?.filter === "recommended") {
+    if (userId) {
+      response = await getrecommendedQuestions({
+        userId,
+        searchQuery: searchParams.q,
+        page: searchParams.page ? +searchParams.page : 1,
+      });
+    } else {
+      response = {
+        questions: [],
+        isNext: false,
+      };
+    }
+  } else {
+    response = await getQuestions({
+      searchQuery: searchParams.q,
+      filter: searchParams.filter,
+      page: searchParams.page ? +searchParams.page : 1,
+    });
+  }
 
   return (
     <>
@@ -51,7 +80,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
 
       {/* Display the questions or a no-result component(ternary conditional). */}
       <div className="mt-10 flex w-full flex-col gap-6">
-        {response.questions.length > 0 ? (
+      {response && response.questions && response.questions.length > 0 ? (
           response.questions.map((question) => (
             <QuestionCard
               key={question._id}

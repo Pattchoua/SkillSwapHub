@@ -8,22 +8,26 @@ import { getQuestionsById } from "@/lib/actions/question.actions";
 import { getUserById } from "@/lib/actions/user.actions";
 import { formatNumber, getTimestamp } from "@/lib/utils";
 import { auth } from "@clerk/nextjs";
+import { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 import React from "react";
 
+export const metadata: Metadata = {
+  title: "Quetions_details | XMe",
+  description:
+    "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
+};
 
 interface ParamsType {
   id: string;
 }
 interface PageProps {
   params: ParamsType;
-  // searchParams: SearchParamsProps; 
+  // searchParams: SearchParamsProps;
 }
 
 const page = async ({ params, searchParams }: PageProps) => {
- 
-
   // Getting the user ID from Clerk authentication.
   const { userId: clerkId } = auth();
   let mongoUser;
@@ -32,8 +36,8 @@ const page = async ({ params, searchParams }: PageProps) => {
     mongoUser = await getUserById({ userId: clerkId });
   }
 
-   // Fetching the question based on the provided ID.
-   const response = await getQuestionsById({
+  // Fetching the question based on the provided ID.
+  const response = await getQuestionsById({
     questionId: params.id,
   });
 
@@ -123,7 +127,7 @@ const page = async ({ params, searchParams }: PageProps) => {
         userId={mongoUser._id}
         totalAnswers={response.answers.length}
         page={searchParams?.page}
-        filter ={searchParams?.filter}
+        filter={searchParams?.filter}
       />
 
       {/* create and submit an answer. */}

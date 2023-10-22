@@ -27,11 +27,10 @@ const AllAnswers = async ({
   filter,
 }: Props) => {
   // Fetch answers based on the question ID.
-  const response = await getAnswers({ 
+  const response = await getAnswers({
     questionId,
     page: page ? +page : 1,
-    sortBy: filter, 
-  
+    sortBy: filter,
   });
 
   return (
@@ -47,44 +46,44 @@ const AllAnswers = async ({
         {response.answers.map((answer) => (
           <article key={answer._id} className="ligth-border border-b py-10">
             {/* author information. */}
-            <div className="flex items-center justify-between">
-              <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
-                {/* Link to the author's profile with their image and name. */}
-                <Link
-                  href={`/profile/${answer.author.clerkId}`}
-                  className="flex flex-1 items-start gap-1 sm:items-center"
-                >
-                  <Image
-                    src={answer.author.picture}
-                    alt="profile"
-                    width={18}
-                    height={18}
-                    className="rounded-full object-cover max-sm:mt-0.5"
-                  />
-                  <div className="flex flex-col sm:flex-row sm:items-center">
-                    <p className=" body-semibold text-dark300_light700">
-                      {answer.author.name}{" "}
-                    </p>
-                    <p className="small-regular text-light400_light500 ml-1 mt-0.5 line-clamp-1">
-                      answered
-                      {getTimestamp(answer.createdAt)}
-                    </p>
-                  </div>
-                </Link>
-                {/* Placeholder for voting functionality */}
-                <div className="flex justify-end">
-                  <Votes
-                    type="Answer"
-                    itemId={JSON.stringify(answer._id)}
-                    userId={JSON.stringify(userId)}
-                    upvotes={answer.upvotes.length}
-                    hasupVoted={answer.upvotes.includes(userId)}
-                    downvotes={answer.downvotes.length}
-                    hasdownVoted={answer.downvotes.includes(userId)}
-                  />
+
+            <div className="mb-8 flex flex-col-reverse justify-between gap-5 sm:flex-row sm:items-center sm:gap-2">
+              {/* Link to the author's profile with their image and name. */}
+              <Link
+                href={`/profile/${answer.author.clerkId}`}
+                className="flex flex-1 items-start gap-1 sm:items-center"
+              >
+                <Image
+                  src={answer.author.picture}
+                  alt="profile"
+                  width={18}
+                  height={18}
+                  className="rounded-full object-cover max-sm:mt-0.5"
+                />
+                <div className="flex flex-col sm:flex-row sm:items-center">
+                  <p className=" body-semibold text-dark300_light700">
+                    {answer.author.name}{" "}
+                  </p>
+                  <p className="small-regular text-light400_light500 ml-1 mt-0.5 line-clamp-1">
+                    answered
+                    {getTimestamp(answer.createdAt)}
+                  </p>
                 </div>
+              </Link>
+              {/* Placeholder for voting functionality */}
+              <div className="flex justify-end">
+                <Votes
+                  type="Answer"
+                  itemId={JSON.stringify(answer._id)}
+                  userId={JSON.stringify(userId)}
+                  upvotes={answer.upvotes.length}
+                  hasupVoted={answer.upvotes.includes(userId)}
+                  downvotes={answer.downvotes.length}
+                  hasdownVoted={answer.downvotes.includes(userId)}
+                />
               </div>
             </div>
+
             {/* Displaying the content of the answer by parsing its HTML */}
             <ParseHTML data={answer.content} />
           </article>
@@ -97,7 +96,6 @@ const AllAnswers = async ({
         />
       </div>
     </div>
-  
   );
 };
 

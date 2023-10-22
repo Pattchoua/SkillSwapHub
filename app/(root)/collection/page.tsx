@@ -7,6 +7,15 @@ import { getSavedQuestions } from "@/lib/actions/user.actions";
 import { auth } from "@clerk/nextjs";
 import { SearchParamsProps } from "@/types";
 import Pagination from "@/components/shared/Pagination";
+import { Metadata } from "next";
+
+
+export const metadata: Metadata = {
+  title: "Collection| XMe",
+  description:
+    "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
+};
+
 
 export default async function Home({ searchParams }: SearchParamsProps) {
   const { userId } = auth();

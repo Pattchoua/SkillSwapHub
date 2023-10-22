@@ -11,6 +11,7 @@ import { formatNumber } from "@/lib/utils";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
+import { toast } from "../ui/use-toast";
 
 interface Props {
   type: string;
@@ -43,12 +44,19 @@ const Votes = ({
       userId: JSON.parse(userId),
       path: pathname,
     });
+    return toast({
+      title: `Question ${!hasSaved ? 'Saved in' : 'Removed from'} your Collection`,
+      variant: !hasSaved ? 'default' : 'destructive'
+    });
   };
 
   // Function to handle voting (both upvoting and downvoting) based on the action provided
   const handleVote = async (action: string) => {
     if (!userId) {
-      return;
+      return toast({
+        title: "please log in",
+        description: 'You must be logged in to perform this action'
+      });
     }
     // Handling the upvote
     if (action === "upvote") {
@@ -69,8 +77,10 @@ const Votes = ({
           path: pathname,
         });
       }
-      //TODO: showing a Toast
-      return;
+      return toast({
+        title: `Upvote ${!hasupVoted ? 'Sucessfull' : 'Removed'}`,
+        variant: !hasupVoted ? 'default' : 'destructive'
+      });
     }
     // Handling the downvote
     if (action === "downvote") {
@@ -91,8 +101,10 @@ const Votes = ({
           path: pathname,
         });
       }
-      //TODO: showing a Toast
-      return;
+      return toast({
+        title: `Downvote ${!hasdownVoted ? 'Sucessfull' : 'Removed'}`,
+        variant: !hasdownVoted ? 'default' : 'destructive'
+      });
     }
   };
 

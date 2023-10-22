@@ -7,7 +7,13 @@ import QuestionCard from "@/components/cards/QuestionCard";
 import { URLProps } from "@/types";
 import NoResult from "@/components/shared/NoResult";
 import Pagination from "@/components/shared/Pagination";
+import { Metadata } from "next";
 
+export const metadata: Metadata = {
+  title: "Tags_details | XMe",
+  description:
+    "XMe is a platform where professionals from diverse fields share their expertise,answer questions, and engage with a curious audience.",
+};
 const Page = async ({ params, searchParams }: URLProps) => {
   const response = await getQuestionsByTagId({
     tagId: params.id,

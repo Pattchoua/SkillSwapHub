@@ -10,12 +10,13 @@ import {
   QuestionVoteParams,
   DeleteQuestionParams,
   EditQuestionParams,
+  RecommendedParams,
 } from "./shared.types";
 import User from "@/database/user.model";
 import { revalidatePath } from "next/cache";
 import Answer from "@/database/answer.model";
 import interaction from "@/database/interaction.model";
-import { FilterQuery } from "mongoose";
+import { FilterQuery, set } from "mongoose";
 
 // Asynchronous function to create a new question.
 export async function createQuestion(params: CreateQuestionParams) {
@@ -315,4 +316,79 @@ export async function getTopQuestions() {
 }
 function limit(pageSize: number) {
   throw new Error("Function not implemented.");
+}
+
+// Asynchronous function to retrieve recommended questions
+export async function getrecommendedQuestions(params: RecommendedParams) {
+  try {
+    connectToDatabase();
+
+    const { userId, page = 1, pageSize = 10, searchQuery } = params;
+
+    // Fetch the user based on the given clerk ID.
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("user not found");
+    }
+    // Calculate the number of questions to skip for pagination.
+    const skipAmount = (page - 1) * pageSize;
+
+    // Fetch all interactions (views) of the user
+    const userInteractions = await interaction
+      .find({ user: user._id })
+      .populate("tags")
+      .exec();
+
+    // Aggregate all tags from the user's interactions.
+    const userTags = userInteractions.reduce((tags, interaction) => {
+      if (interaction.tags) {
+        tags = tags.concat(interaction.tags);
+      }
+      return tags;
+    }, []);
+
+    // Extract distinct tag IDs from the user's interactions.
+    const distinctUserTagsIds = [
+      ...new Set(userTags.map((tag: any) => tag._id)),
+    ];
+
+    // Base query for fetching the recommended questions.
+    const query: FilterQuery<typeof Question> = {
+      $and: [
+        { tags: { $in: distinctUserTagsIds } },
+        { author: { $ne: user._id } },
+      ],
+    };
+
+    // If there's a search query, include questions with title or content matching the query.
+    if (searchQuery) {
+      query.$or = [
+        { title: { $regex: searchQuery, $options: "i" } },
+        { content: { $regex: searchQuery, $options: "i" } },
+      ];
+    }
+    // Get the total count of questions matching the query.
+    const totalQuestions = await Question.countDocuments(query);
+
+    // Fetch the actual recommended questions with pagination.
+    const recommendedQuestions = await Question.find(query)
+      .populate({
+        path: "tags",
+        model: Tag,
+      })
+      .populate({
+        path: "author",
+        model: User,
+      })
+      .skip(skipAmount)
+      .limit(pageSize);
+
+    // Determine if there are more questions to be fetched in the next page.
+    const isNext = totalQuestions > skipAmount + recommendedQuestions.length;
+    return { question: recommendedQuestions, isNext };
+  } catch (error) {
+    console.error("Error getting recommended questions", error);
+    throw error;
+  }
 }

@@ -68,7 +68,7 @@ const GlobalSearch = () => {
         }
       }
     }, 500);
-     // Clear the timeout when the component or dependencies update.
+    // Clear the timeout when the component or dependencies update.
     return () => clearTimeout(delayDebounceFn);
   }, [search, router, pathname, searchParams, query]);
 
@@ -89,7 +89,8 @@ const GlobalSearch = () => {
           type="text"
           value={search}
           placeholder="Search globally"
-          className="paragraph-regular text-dark400_light700 no-focus placeholder background-light800_darkgradient border-none shadow-none outline-none"
+          className="paragraph-regular text-dark400_light700 no-focus placeholder 
+           border-none shadow-none outline-none bg-transparent"
           onChange={(e) => {
             setSearch(e.target.value);
             if (!isOpen) setIsOpen(true);
