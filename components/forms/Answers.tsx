@@ -18,6 +18,8 @@ import { Button } from "../ui/button";
 import Image from "next/image";
 import { createAnswer } from "@/lib/actions/answer.actions";
 import { usePathname } from "next/navigation";
+import { ReloadIcon } from "@radix-ui/react-icons";
+//import axios from 'axios'
 
 // Type definition for the component props.
 interface Props {
@@ -32,6 +34,8 @@ const Answers = ({ question, questionId, authorId }: Props) => {
   const pathname = usePathname();
 
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isSubmittingAI, setIsSubmittingAI] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
 
   // Set up the form with React Hook Form and Zod validation.
   const form = useForm<z.infer<typeof AnswerSchema>>({
@@ -44,6 +48,7 @@ const Answers = ({ question, questionId, authorId }: Props) => {
   // Function to handle form submission and create an answer.
   const handleCreateAnswer = async (values: z.infer<typeof AnswerSchema>) => {
     setIsSubmitting(true);
+  
     try {
       await createAnswer({
         content: values.answer,
@@ -62,6 +67,36 @@ const Answers = ({ question, questionId, authorId }: Props) => {
       console.log(error);
     } finally {
       setIsSubmitting(false);
+   
+    }
+  };
+
+  const generateAIAnswer = async () => {
+    if (!authorId) return;
+    setIsSubmittingAI(true);
+    setIsLoading(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_SERVER_URL}/api/chatgpt`,
+        {
+          method: "POST",
+          body: JSON.stringify({ question }),
+        }
+      );
+      const aiAnswer = await response.json();
+  // convert the plain text to HTML format
+const formattedAnswer = aiAnswer.reply.replace(/\n/g, '<br />')
+
+if (editorRef. current) {
+  const editor = editorRef.current as any;
+  editor.setContent(formattedAnswer)
+}
+
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsSubmittingAI(false);
+      setIsLoading(false);
     }
   };
 
@@ -74,16 +109,33 @@ const Answers = ({ question, questionId, authorId }: Props) => {
         </h4>
         <Button
           className="btn light-border-2 gap-1.5 rounded-md px-4 py-2.5 text-primary-500 shadow-none"
-          onClick={() => {}}
+          onClick={generateAIAnswer}
         >
-          <Image
-            src="/assets/icons/stars.svg"
+          {isSubmittingAI ? (
+            <>
+            <Image
+            src="/assets/icons/stars.png"
             alt="star"
-            width={12}
-            height={12}
-            className="object-contain"
+            width={40}
+            height={40}
+           className="object-contain"
           />
-          Generate an AI answer
+           <ReloadIcon className=" my-2 h-10 w-10 text-primary-500 animate-spin" />
+            Generating....
+            </>
+          ):(
+            <>
+             <Image
+            src="/assets/icons/stars.png"
+            alt="star"
+            width={40}
+            height={40}
+           className="object-contain"
+          />
+          Generate AI Answer
+            </>
+          )}
+      
         </Button>
       </div>
       {/* main form and editor */}
