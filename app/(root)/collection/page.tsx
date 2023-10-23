@@ -25,7 +25,7 @@ export default async function Home({ searchParams }: SearchParamsProps) {
     filter: searchParams.filter,
     page: searchParams.page ? +searchParams.page : 1,
   });
-console.log(response)
+
   return (
     <>
       <h1 className="h1-bold text-dark100_light900">Saved Questions</h1>
