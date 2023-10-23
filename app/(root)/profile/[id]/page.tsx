@@ -50,9 +50,9 @@ const Page = async ({ params, searchParams }: URLProps) => {
             </p>
             {/* Display user's portfolio link and join date */}
             <div className="mt-5 flex flex-wrap items-center justify-start gap-1.5">
-              {userInfo.user.location && (
+              {userInfo.user.portfolioWebsite && (
                 <ProfileLink
-                  imgUrl="/assets/icons/link.svg"
+                  imgUrl="/assets/icons/link.png"
                   href={userInfo.user.portfolioWebsite}
                   title="Portfolio"
                 />
@@ -60,25 +60,28 @@ const Page = async ({ params, searchParams }: URLProps) => {
 
               {userInfo.user.location && (
                 <ProfileLink
-                  imgUrl="/assets/icons/location.svg"
+                  imgUrl="/assets/icons/location.png"
                   title={userInfo.user.location}
                 />
               )}
 
               <ProfileLink
-                imgUrl="/assets/icons/calendar.svg"
+                imgUrl="/assets/icons/calendar.png"
                 title={getFormattedDate(userInfo.user.joinedAt)}
               />
             </div>
-            {/* Display the user's bio */}
-            {userInfo.user.bio && <p>{userInfo.user.bio}</p>}
+              {/* Display the user's bio */}
+              <div className="mt-5 flex items-center justify-start text-dark200_light800">
+                {userInfo.user.bio && <p>{userInfo.user.bio}</p>}
+            </div>
+            
           </div>
         </div>
         <div className="flex justify-end max-sm:mb-5 max-sm:w-full sm:mt-3">
           <SignedIn>
             {clerkId === userInfo.user.clerkId && (
               <Link href="/profile/edit">
-                <Button className="paragraph-medium btn-secondary text-dark300_light900 min-h-[46px] min-w-[175py] px-4 py-3">
+                <Button className="paragraph-medium btn-secondary primary-gradient !text-light-900 min-h-[46px] min-w-[175py] px-4 py-3">
                   Edit profile
                 </Button>
               </Link>
